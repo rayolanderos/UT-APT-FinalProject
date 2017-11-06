@@ -1,0 +1,27 @@
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /vendor
+  static_dir: www/vendor
+
+- url: /css
+  static_dir: www/css
+
+- url: /favicon\.ico
+  static_files: www/css/img/favicon.ico
+  upload: www/css/img/favicon.ico
+
+- url: /js
+  static_dir: www/js
+
+- url: /.*
+  script: hopsquad.app
+
+libraries:
+- name: webapp2
+  version: latest
+- name: jinja2
+  version: latest
+
