@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "205890785896",
+    "firebase_url": "https://hopsquadatx.firebaseio.com",
+    "project_id": "hopsquadatx",
+    "storage_bucket": "hopsquadatx.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:205890785896:android:f4ed64c988990dcd",
+        "android_client_info": {
+          "package_name": "com.hopsquad.hopsquadapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "205890785896-pu5eo08ck4vo6o2m6p2iskgq2f8oaiof.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hopsquad.hopsquadapp",
+            "certificate_hash": "7f1ad5c43bc0f68a0d78b0e6441e33ee857cfdaa"
+          }
+        },
+        {
+          "client_id": "205890785896-3nbqp51rqo2m60qan3703re0j0b6d5p4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBy5JfPjj4Aw1nVq5DUsRMwP3xud2yREo8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "205890785896-3nbqp51rqo2m60qan3703re0j0b6d5p4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

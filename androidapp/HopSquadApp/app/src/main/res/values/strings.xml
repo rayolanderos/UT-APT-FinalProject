@@ -13,4 +13,9 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_home">Beers</string>
+    <string name="title_dashboard">User</string>
+    <string name="title_notifications">Settings</string>
+
 </resources>
