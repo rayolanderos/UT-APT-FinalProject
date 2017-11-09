@@ -40,7 +40,6 @@ public class LoginActivity extends AppCompatActivity {
     private View mLoginFormView;
 
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser mUser;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,9 +158,9 @@ public class LoginActivity extends AppCompatActivity {
                     mAuth.signInWithEmailAndPassword(loginEmail, loginPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
+                            showProgress(false);
                             if(task.isSuccessful()) {
                                 Log.d("AUTH", "Existing User, Welcome back!");
-                                showProgress(false);
                                 launchMainActivity();
                             } else {
                                 mPasswordView.setError(getString(R.string.error_incorrect_password));
