@@ -16,7 +16,7 @@ class Beer(ndb.Model):
     srm = ndb.IntegerProperty()
     on_tap = ndb.BooleanProperty()
     review = ndb.FloatProperty()
-    review_count = ndb.IntegerProperty()
+    review_count = ndb.IntegerProperty(default=0)
     creation_date = ndb.DateTimeProperty(auto_now_add=True)
 
     def get_name(self):
