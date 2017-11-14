@@ -56,6 +56,11 @@
   </nav>
   <div class="content-wrapper">
     <div class="container-fluid">
+      {% if (has_msg)  %}
+      <div class="alert alert-{{msg_type}}" role="alert">
+        {{ msg }}
+      </div>
+      {% endif %}
 
       {% block content %} {% endblock %}
 

@@ -26,7 +26,7 @@ class TapList(webapp2.RequestHandler):
 
         beers =  self.get_beers()
 
-        page_data = {'beers': beers, 'page_name': 'tap_list'}
+        page_data = {'beers': beers, 'page_name': 'tap_list', 'has_msg': False,}
         template = JINJA_ENVIRONMENT.get_template('tap-list.html')
         self.response.write(template.render(page_data))
 
@@ -65,6 +65,10 @@ class TapList(webapp2.RequestHandler):
             api_uri = self.uri_for('update-beer', _full=True)
             logging.info("++++++++++++ updating beer_data +++++++++++++++");
             logging.info(beer_data);
+        elif (action == "deleteBeer"):
+            api_uri = self.uri_for('delete-beer', _full=True)
+            logging.info("++++++++++++ deleting beer_data +++++++++++++++");
+            logging.info(beer_data);
 
         result = urlfetch.fetch(
             url=api_uri,
@@ -85,7 +89,7 @@ class TapList(webapp2.RequestHandler):
 
             beers = self.get_beers()
 
-            page_data = {'beers': beers, 'page_name': 'tap_list', 'msg_type': msg_type, 'msg': msg}
+            page_data = {'beers': beers, 'page_name': 'tap_list', 'has_msg': True,'msg_type': msg_type, 'msg': msg}
             template = JINJA_ENVIRONMENT.get_template('tap-list.html')
             self.response.write(template.render(page_data))
 

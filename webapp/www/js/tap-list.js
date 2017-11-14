@@ -5,6 +5,15 @@ $(document).ready( function() {
     $("#addBeerCardOpen").click();
   });
 
+  $('#deleteBeerModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) 
+    var beerId = button.data('id')
+    var beerName = button.data('name') 
+    var modal = $(this)
+    modal.find('#showBeerName').text(beerName)
+    modal.find('#deleteBeerIdInput').val(beerId)
+  })
+
   $("#addBeerBtn").click( function (){
 
     // Upload Tap List Image

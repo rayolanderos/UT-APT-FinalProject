@@ -50,6 +50,6 @@ class AddBeer(webapp2.RequestHandler):
 			self.response.out.write(json.dumps(res))
 
 		else:
-			res = { "msg" : "That beer already exists in the inventory. Try again.", "success": False }
+			res = { "msg" : "That beer already exists in the inventory or something went wrong. Please try again.", "success": False }
 			self.response.out.write(json.dumps(res))
         

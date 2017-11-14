@@ -93,6 +93,7 @@
                         </div>
                       </div>
                       <button id="updateBeerBtn-{{ beer.id }}" type="button" class="btn btn-primary pull-right updateBeerBtn" data="{{ beer.id }}">Update Beer</button>
+                      <button id="preDeleteBeerBtn-{{ beer.id }}" type="submit" class="btn btn-danger preDeleteBeerBtn pull-right margin-right-10" data-id="{{ beer.id }}" data-name="{{ beer.name }}" data-toggle="modal" data-target="#deleteBeerModal">Delete Beer</button>
                       <div class="clear"></div>
                     </div>
                   </div>
@@ -189,6 +190,27 @@
             </div>
             <button id="showAddBeer" type="button" class="btn btn-info pull-right">New Beer <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
             <div class="clear"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="deleteBeerModal" tabindex="-1" role="dialog" aria-labelledby="deleteBeerModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Are you sure you want to delete?</h5>
+              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body">Please confirm you want to delete <b id="showBeerName"></b>.</div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+              <form id="deleteBeerForm" method="POST" class="deleteBeerForm"> 
+                <input type="hidden" id="deleteBeerIdInput" name="beerId" value=""/>
+                <input type="hidden" name="action" value="deleteBeer"/>
+                <button id="deleteBeerBtn" type="submit" class="btn btn-danger deleteBeerBtn">Delete</button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
