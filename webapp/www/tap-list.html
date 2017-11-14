@@ -7,17 +7,108 @@
           <p></p>
           <div id="accordion-container">
             <div id="accordion" role="tablist">
-              <div class="card">
-                <div class="card-header" role="tab" id="heading-1">
+              {% for beer in beers %}
+                <div class="card">
+                  <div class="card-header" role="tab" id="heading-{{ beer.id }}">
+                    <h6 class="mb-0">
+                      <a data-toggle="collapse" href="#beer-{{ beer.id }}" aria-expanded="true" aria-controls="beer-1">
+                        {{ beer.name }}
+                      </a>
+                    </h6>
+                  </div>
+                  <div id="beer-{{ beer.id }}" class="collapse" role="tabpanel" aria-labelledby="heading-{{ beer.id }}" data-parent="#accordion">
+                    <div class="card-body">
+                      <form id="updateBeerForm-{{ beer.id }}" method="POST">
+                        <div class="form-row">
+                          <div class="form-group col-md-6">
+                            <label for="beerName">Name</label>
+                            <input type="text" class="form-control" placeholder="beer name" name="beerName" value="{{ beer.name }}">
+                            <br>
+                            <label for="beerStyle">Style</label>
+                            <input type="text" class="form-control" placeholder="beer style" name="beerStyle" value="{{ beer.style }}">
+                            <br>
+                            <label for="beerAbv">ABV</label>
+                            <div class="input-group mb-2 mb-sm-0">
+                              <div class="input-group-addon">%</div>
+                              <input type="number" class="form-control" placeholder="0.0" name="beerAbv" value="{{ beer.abv }}">
+                            </div>
+                            <br>
+                            <label for="beerIbus">IBUs</label>
+                            <input type="number" step="1" class="form-control" placeholder="0" name="beerIbus" value="{{ beer.ibus }}">
+                            <br>
+                            <label for="beerSrm">SRM</label>
+                            <input type="number" step="1" class="form-control" placeholder="0" name="beerSrm" value="{{ beer.srm }}">
+                            <br>
+                          </div>
+                          <div class="form-group col-md-6">
+                            <div class="padding-left-20">
+                              <label for="beerOnTap">Beer On Tap</label>
+                              <div class="form-group pull-right">
+                                <label class="switch">
+                                  <input type="checkbox" name="beerOnTap" {% if beer.on_tap: %} checked {% endif %}>
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <br class="clear">
+                              <label for="beerPrice">Price</label>
+                              <div class="input-group mb-2 mb-sm-0">
+                                <div class="input-group-addon">$</div>
+                                <input type="number" class="form-control" placeholder="0.00" name="beerPrice" value="{{ beer.price }}">
+                              </div>
+                              <br>
+                              <label for="beerDescription">Description</label>
+                              <textarea name="beerDescription" class="form-control" rows="7" placeholder="beer description goes here">{{ beer.description }}</textarea> 
+                            </div>
+                          </div>
+                        </div>
+                        <input type="hidden" name="action" value="updateBeer">
+                        <input type="hidden" name="beerId" value="{{beer.id}}">
+                        <input type="hidden" id="updateBeerTapListImage-{{ beer.id }}" name="beerTapListImage" value="{{ beer.tap_list_image }}">
+                        <input type="hidden" id="updateBeerDescriptionImage-{{ beer.id }}" name="beerDescriptionImage" value="{{ beer.description_image }}">
+                      </form>
+                      <div class="form-group">
+                        <div class="wrapper">
+                          <form id="updateBeerTapListImageForm-{{ beer.id }}" method="POST" enctype="multipart/form-data"> 
+                            <label for="beerTapListImage">Tap List Image</label>
+                            <div class="box">
+                              <div class="js--image-preview {% if beer.tap_list_image != "": %} js--no-default {% endif %}" {% if beer.tap_list_image != "": %} style="background-image:url('{{beer.tap_list_image}}');" {% endif %} ></div>
+                              <div class="upload-options" onClick="clearImageInput('#updateBeerTapListImage-{{beer.id }}');">
+                                <label>
+                                  <input type="file" class="image-upload" accept="image/*" id="updateBeerTapListImageFile-{{ beer.id }}" name="beerTapListImageFile" value="">
+                                </label>
+                              </div>
+                            </div>
+                          </form>
+                          <form id="updateBeerDescriptionImageForm-{{ beer.id }}" method="POST" enctype="multipart/form-data">
+                            <label for="beerDescriptionImage">Description Image</label>
+                            <div class="box">
+                              <div class="js--image-preview {% if beer.tap_list_image != "": %} js--no-default {% endif %}" {% if beer.description_image != "": %} style="background-image:url('{{beer.description_image}}');" {% endif %} ></div>
+                              <div class="upload-options" onClick="clearImageInput('#updateBeerDescriptionImage-{{beer.id }}');">
+                                <label>
+                                  <input type="file" class="image-upload" accept="image/*" name="beerDescriptionImageFile" id="updateBeerDescriptionImageFile-{{ beer.id }}" value="">
+                                </label>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                      <button id="updateBeerBtn-{{ beer.id }}" type="button" class="btn btn-primary pull-right updateBeerBtn" data="{{ beer.id }}">Update Beer</button>
+                      <div class="clear"></div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+              <div id="addBeerCard" class="card hidden">
+                <div class="card-header" role="tab" id="addheading">
                   <h6 class="mb-0">
-                    <a data-toggle="collapse" href="#beer-1" aria-expanded="true" aria-controls="beer-1">
-                      Beer #1
+                    <a id="addBeerCardOpen" data-toggle="collapse" href="#addBeer" aria-expanded="true" aria-controls="addBeer">
+                      New Beer
                     </a>
                   </h6>
                 </div>
-                <div id="beer-1" class="collapse show" role="tabpanel" aria-labelledby="heading-1" data-parent="#accordion">
+                <div id="addBeer" class="collapse" role="tabpanel" aria-labelledby="addheading" data-parent="#accordion">
                   <div class="card-body">
-                    <form id="addBeer" method="POST">
+                    <form id="addBeerForm" method="POST">
                       <div class="form-row">
                         <div class="form-group col-md-6">
                           <label for="beerName">Name</label>
@@ -25,12 +116,6 @@
                           <br>
                           <label for="beerStyle">Style</label>
                           <input type="text" class="form-control" placeholder="beer style" name="beerStyle">
-                          <br>
-                          <label for="beerPrice">Price</label>
-                          <div class="input-group mb-2 mb-sm-0">
-                            <div class="input-group-addon">$</div>
-                            <input type="number" class="form-control" placeholder="0.00" name="beerPrice">
-                          </div>
                           <br>
                           <label for="beerAbv">ABV</label>
                           <div class="input-group mb-2 mb-sm-0">
@@ -43,64 +128,67 @@
                           <br>
                           <label for="beerSrm">SRM</label>
                           <input type="number" step="1" class="form-control" placeholder="0" name="beerSrm">
+                          <br>
                         </div>
                         <div class="form-group col-md-6">
                           <div class="padding-left-20">
-                            <label for="beerTapListImage">Tap List Image</label>
-                            <div class="box">
-                              <div class="js--image-preview"></div>
-                              <div class="upload-options">
-                                <label>
-                                  <input type="file" class="image-upload" accept="image/*" name="beerTapListImage" value="">
-                                </label>
-                              </div>
+                            <label for="beerOnTap">Beer On Tap</label>
+                            <div class="form-group pull-right">
+                              <label class="switch">
+                                <input type="checkbox" name="beerOnTap">
+                                <span class="slider round"></span>
+                              </label>
+                            </div>
+                            <br class="clear">
+                            <label for="beerPrice">Price</label>
+                            <div class="input-group mb-2 mb-sm-0">
+                              <div class="input-group-addon">$</div>
+                              <input type="number" class="form-control" placeholder="0.00" name="beerPrice">
                             </div>
                             <br>
-                            <label for="beerTapListImage">Description Image</label>
-                            <div class="box">
-                              <div class="js--image-preview"></div>
-                              <div class="upload-options">
-                                <label>
-                                  <input type="file" class="image-upload" accept="image/*" name="beerDescriptionImage" value="">
-                                </label>
-                              </div>
-                            </div>
+                            <label for="beerDescription">Description</label>
+                            <textarea name="beerDescription" class="form-control" rows="7" placeholder="beer description goes here"></textarea> 
                           </div>
                         </div>
                       </div>
-                      <div class="form-group">
-                        <label for="beerDescription">Description</label>
-                        <textarea name="beerDescription" class="form-control" rows="4" placeholder="beer description goes here"></textarea> 
-                      </div>
-                      <div class="form-group pull-left">
-                        <label class="switch">
-                          <input type="checkbox" name="beerOnTap">
-                          <span class="slider round"></span>
-                        </label>
-                      </div>
                       <input type="hidden" name="action" value="addBeer">
-                      <button type="submit" class="btn btn-primary pull-right">Save Beer</button>
-                      <div class="clear"></clear>
+                      <input type="hidden" id="addBeerTapListImage" name="beerTapListImage" value="">
+                      <input type="hidden" id="addBeerDescriptionImage" name="beerDescriptionImage" value="">
                     </form>
-                  </div>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-header" role="tab" id="heading-2">
-                  <h6 class="mb-0">
-                    <a class="collapsed" data-toggle="collapse" href="#beer-2" aria-expanded="false" aria-controls="beer-2">
-                      Beer #2
-                    </a>
-                  </h6>
-                </div>
-                <div id="beer-2" class="collapse" role="tabpanel" aria-labelledby="heading-2" data-parent="#accordion">
-                  <div class="card-body">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                    <div class="form-group">
+                      <div class="wrapper">
+                        <form id="addBeerTapListImageForm" method="POST" enctype="multipart/form-data"> 
+                          <label for="beerTapListImage">Tap List Image</label>
+                          <div class="box">
+                            <div class="js--image-preview"></div>
+                            <div class="upload-options">
+                              <label>
+                                <input type="file" class="image-upload" accept="image/*" id="addBeerTapListImageFile" name="beerTapListImageFile" value="">
+                              </label>
+                            </div>
+                          </div>
+                        </form>
+                        <form id="addBeerDescriptionImageForm" method="POST" enctype="multipart/form-data">
+                          <label for="beerDescriptionImage">Description Image</label>
+                          <div class="box">
+                            <div class="js--image-preview"></div>
+                            <div class="upload-options">
+                              <label>
+                                <input type="file" class="image-upload" accept="image/*" name="beerDescriptionImageFile" id="addBeerDescriptionImageFile" value="">
+                              </label>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                    <button id="addBeerBtn" type="button" class="btn btn-primary pull-right">Add Beer</button>
+                    <div class="clear"></clear>
                   </div>
                 </div>
               </div>
             </div>
-
+            <button id="showAddBeer" type="button" class="btn btn-info pull-right">New Beer <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+            <div class="clear"></div>
           </div>
         </div>
       </div>

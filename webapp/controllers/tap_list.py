@@ -17,10 +17,14 @@ class TapList(webapp2.RequestHandler):
 
     def get_beers(self):
         beers = {}
+        result = urlfetch.fetch(self.uri_for('get-all-beers', _full=True))
+        if result.status_code == 200:
+            beers = json.loads(result.content)
+        return beers
 
     def get(self):
 
-        beers =  ''
+        beers =  self.get_beers()
 
         page_data = {'beers': beers, 'page_name': 'tap_list'}
         template = JINJA_ENVIRONMENT.get_template('tap-list.html')
@@ -30,6 +34,7 @@ class TapList(webapp2.RequestHandler):
 
         action = self.request.get('action')
 
+        beer_id = self.request.get('beerId', '')
         beer_name = self.request.get('beerName', '')
         beer_style = self.request.get('beerStyle', 'Generic')
         beer_price = self.request.get('beerPrice', 0.0)
@@ -41,6 +46,7 @@ class TapList(webapp2.RequestHandler):
         beer_description = self.request.get('beerDescription', 'Empty description')
         beer_description_image = self.request.get('beerDescriptionImage', '')
         beer_data = { 
+            "beerId" : beer_id, 
             "beerName" : beer_name, 
             "beerStyle" : beer_style,
             "beerTapListImage" : beer_tap_list_image,
@@ -53,13 +59,12 @@ class TapList(webapp2.RequestHandler):
             "beerOnTap" : beer_on_tap 
         }
 
-        logging.info('********* beer data ***********')
-        logging.info(beer_data)
-
         if(action == "addBeer"):
             api_uri = self.uri_for('add-beer', _full=True)
-        else:
-            api_uri = self.uri_for('add-beer', _full=True)
+        elif (action == "updateBeer"):
+            api_uri = self.uri_for('update-beer', _full=True)
+            logging.info("++++++++++++ updating beer_data +++++++++++++++");
+            logging.info(beer_data);
 
         result = urlfetch.fetch(
             url=api_uri,

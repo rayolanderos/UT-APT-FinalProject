@@ -1,3 +1,119 @@
+$(document).ready( function() {
+
+  $("#showAddBeer").click( function() {
+    $("#addBeerCard").show();
+    $("#addBeerCardOpen").click();
+  });
+
+  $("#addBeerBtn").click( function (){
+
+    // Upload Tap List Image
+    $.ajax({
+      url: '/generate_upload_url',
+      async: false,
+      success: function(data) {
+        ajaxUpload(data, '#addBeerTapListImageForm', '#addBeerTapListImage', 'add');
+      }
+    });
+
+    // Upload Description Image
+    $.ajax({
+      url: '/generate_upload_url',
+      async: false,
+      success: function(data) {
+        ajaxUpload(data, '#addBeerDescriptionImageForm', '#addBeerDescriptionImage', 'add');
+      }
+    });
+
+  });
+
+  $(".updateBeerBtn").click( function (){
+    var beerId = $(this).attr("data");
+
+    // Upload Tap List Image
+    if($("#updateBeerTapListImageForm-"+beerId+" .box").hasClass("updated")){
+      $.ajax({
+        url: '/generate_upload_url',
+        async: false,
+        success: function(data) {
+          ajaxUpload(data, '#updateBeerTapListImageForm-'+beerId, '#updateBeerTapListImage-'+beerId, 'update', beerId);
+        }
+      });
+    }
+
+    // Upload Description Image
+    if($("#updateBeerDescriptionImageForm-"+beerId+" .box").hasClass("updated")){
+      $.ajax({
+        url: '/generate_upload_url',
+        async: false,
+        success: function(data) {
+          ajaxUpload(data, '#addBeerDescriptionImageForm-'+beerId, '#addBeerDescriptionImage-'+beerId, 'update', beerId);
+        }
+      });
+    }
+
+  });
+    
+});
+
+function clearImageInput(input){
+  $(input).val("");
+}
+
+function ajaxUpload(url, form, input, formAction, id=""){
+  $(form).attr("action", url);
+  $.ajax({
+    type: "POST",
+    url: url,
+    // Form data
+    data: new FormData($(form)[0]),
+
+    // Tell jQuery not to process data or worry about content-type
+    // You *must* include these options!
+    cache: false,
+    contentType: false,
+    processData: false,
+
+    // Custom XMLHttpRequest
+    xhr: function() {
+        var myXhr = $.ajaxSettings.xhr();
+        if (myXhr.upload) {
+            // For handling the progress of the upload
+            myXhr.upload.addEventListener('progress', function(e) {
+                if (e.lengthComputable) {
+                    $('progress').attr({
+                        value: e.loaded,
+                        max: e.total,
+                    });
+                }
+            } , false);
+        }
+        return myXhr;
+    },
+    success: function(data){
+      $(input).val(data) 
+      postUploadCallback(formAction, id);
+    }
+  });
+
+}
+
+function postUploadCallback(formAction, id=""){
+  if(formAction == "add"){
+    var addBeerTapListImage = $("#addBeerTapListImage").val();
+    var addBeerDescriptionImage = $("#addBeerDescriptionImage").val();
+    if(addBeerTapListImage != "" && addBeerDescriptionImage != "")
+      $("#addBeerForm").submit();
+  }
+
+  else if(formAction == "update"){
+    var updateBeerTapListImage = $("#updateBeerTapListImage-"+id).val();
+    var updateBeerDescriptionImage = $("#addBeerDescriptionImage-"+id).val();
+    if(updateBeerTapListImage != "" && updateBeerTapListImage != "")
+    $("#updateBeerForm-"+id).submit();
+  }
+}
+
 function initImageUpload(box) {
   let uploadField = box.querySelector('.image-upload');
 
@@ -17,6 +133,7 @@ function initImageUpload(box) {
     }
     reader.readAsDataURL(file);
     thumb.className += ' js--no-default';
+    box.className += ' updated';
   }
 
   function checkType(file){
