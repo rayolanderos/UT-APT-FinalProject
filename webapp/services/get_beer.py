@@ -17,13 +17,13 @@ class GetBeer(webapp2.RequestHandler):
 			date = beer.creation_date
 			date_string = date.strftime('%m/%d/%Y')
 			beer_data = { 
-				'id': beer.key.id(), 
+				  'id': beer.key.id(), 
 		    	'name': beer.name, 
 		    	'style': beer.style, 
 		    	'tap_list_image': beer.tap_list_image, 
 		    	'description': beer.description,
 		    	'description_image' : beer.description_image, 
-		    	'price' : beer.price, 
+		    	'price' : beer.price,  
 		    	'abv' : beer.abv, 
 		    	'ibus' : beer.ibus, 
 		    	'srm' : beer.srm, 
