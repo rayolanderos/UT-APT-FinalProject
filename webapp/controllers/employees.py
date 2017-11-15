@@ -17,9 +17,9 @@ class Employees(webapp2.RequestHandler):
 
     def get_employees(self):
         employees = {}
-        # result = urlfetch.fetch(self.uri_for('get-all-employees', _full=True))
-        # if result.status_code == 200:
-        #     employees = json.loads(result.content)
+        result = urlfetch.fetch(self.uri_for('get-all-employees', _full=True))
+        if result.status_code == 200:
+            employees = json.loads(result.content)
         return employees
 
     def get(self):

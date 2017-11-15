@@ -92,8 +92,8 @@
                           </form>
                         </div>
                       </div>
-                      <button id="updateBeerBtn-{{ beer.id }}" type="button" class="btn btn-primary pull-right updateBeerBtn" data="{{ beer.id }}">Update Beer</button>
-                      <button id="preDeleteBeerBtn-{{ beer.id }}" type="submit" class="btn btn-danger preDeleteBeerBtn pull-right margin-right-10" data-id="{{ beer.id }}" data-name="{{ beer.name }}" data-toggle="modal" data-target="#deleteBeerModal">Delete Beer</button>
+                      <button id="updateBeerBtn-{{ beer.id }}" type="button" class="btn btn-primary pull-right updateBeerBtn" data="{{ beer.id }}">Update Beer <i class="fa fa-check-circle" aria-hidden="true"></i></button>
+                      <button id="preDeleteBeerBtn-{{ beer.id }}" type="submit" class="btn btn-danger preDeleteBeerBtn pull-right margin-right-10" data-id="{{ beer.id }}" data-name="{{ beer.name }}" data-toggle="modal" data-target="#deleteBeerModal">Delete Beer <i class="fa fa-minus-circle" aria-hidden="true"></i></button>
                       <div class="clear"></div>
                     </div>
                   </div>
@@ -182,7 +182,7 @@
                         </form>
                       </div>
                     </div>
-                    <button id="addBeerBtn" type="button" class="btn btn-primary pull-right">Add Beer</button>
+                    <button id="addBeerBtn" type="button" class="btn btn-primary pull-right">Add Beer <i class="fa fa-check-circle" aria-hidden="true"></i></button>
                     <div class="clear"></clear>
                   </div>
                 </div>
@@ -208,7 +208,7 @@
               <form id="deleteBeerForm" method="POST" class="deleteBeerForm"> 
                 <input type="hidden" id="deleteBeerIdInput" name="beerId" value=""/>
                 <input type="hidden" name="action" value="deleteBeer"/>
-                <button id="deleteBeerBtn" type="submit" class="btn btn-danger deleteBeerBtn">Delete</button>
+                <button id="deleteBeerBtn" type="submit" class="btn btn-danger deleteBeerBtn">Delete <i class="fa fa-minus-circle" aria-hidden="true"></i></button>
               </form>
             </div>
           </div>
