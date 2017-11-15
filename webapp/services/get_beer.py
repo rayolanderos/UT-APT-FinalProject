@@ -15,17 +15,20 @@ class GetBeer(webapp2.RequestHandler):
 
 		if beer != None:
 			beer_data = { 
-				"beerId" : beer.key.id(),
-			    "beerName" : beer.name, 
-			    "beerStyle" : beer.style,
-			    "beerTapListImage" : beer.tap_list_image,
-			    "beerDescription" : beer.description,
-			    "beerDescriptionImage" : beer.description_image,
-			    "beerPrice" : beer.price,
-			    "beerAbv" : beer.abv,
-			    "beerIbus" : beer.ibus,
-			    "beerSrm" : beer.srm,
-			    "beerOnTap" : beer.on_tap
+				"id" : beer.key.id(),
+			    "name" : beer.name, 
+			    "style" : beer.style,
+			    "tap_list_image" : beer.tap_list_image,
+			    "description" : beer.description,
+			    "description_image" : beer.description_image,
+			    'price' : beer.price, 
+		    	'abv' : beer.abv, 
+		    	'ibus' : beer.ibus, 
+		    	'srm' : beer.srm, 
+		    	'on_tap' : beer.on_tap, 
+		    	'review' : beer.review, 
+		    	'review_count' : beer.review_count,
+		    	'creation_date' : date_string
 			}
 		else:
 			beer_data = {}
