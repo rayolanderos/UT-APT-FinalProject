@@ -4,7 +4,6 @@ from google.appengine.ext import ndb
 
 class Beer(ndb.Model):
     
-    beer_id = ndb.IntegerProperty()
     name = ndb.StringProperty()
     style = ndb.StringProperty()
     tap_list_image = ndb.StringProperty()
