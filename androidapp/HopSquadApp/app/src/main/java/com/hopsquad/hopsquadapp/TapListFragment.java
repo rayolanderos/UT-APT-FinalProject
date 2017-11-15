@@ -2,9 +2,16 @@ package com.hopsquad.hopsquadapp;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.NumberPicker;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 public class TapListFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -15,6 +22,11 @@ public class TapListFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private BeerAdapter mAdapter;
+
 
     public TapListFragment() {
         // Required empty public constructor
@@ -51,7 +63,57 @@ public class TapListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tap_list, container, false);
+        View v = inflater.inflate(R.layout.fragment_tap_list, container, false);
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.beerListRecyclerView);
+        initializeRecyclerView();
+        return v;
+    }
+
+    private void initializeRecyclerView() {
+        if (mRecyclerView == null) {
+            return;
+        }
+
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this.getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // TODO: Pass the view model as parameter.
+        mAdapter = new BeerAdapter();
+    }
+
+    private static class BeerAdapter extends RecyclerView.Adapter<BeerHolder> {
+
+        @Override
+        public BeerHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.beer_list_item, parent, false);
+
+            BeerHolder holder = new BeerHolder(v);
+            return holder;
+        }
+
+        @Override
+        public void onBindViewHolder(BeerHolder holder, int position) {
+            // TODO: update view with info from viewmodel.
+        }
+
+        @Override
+        public int getItemCount() {
+            return 0;
+        }
+    }
+
+    private static class BeerHolder extends RecyclerView.ViewHolder {
+        public ImageView mImageView;
+        public TextView mTitleView;
+        public Spinner mSpinnerView;
+
+        public BeerHolder (View view) {
+            super(view);
+            mImageView = view.findViewById(R.id.beerImage);
+            mTitleView = view.findViewById(R.id.beerNameView);
+            mSpinnerView = view.findViewById(R.id.beerSpinner);
+        }
     }
 
 }
