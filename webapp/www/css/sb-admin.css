@@ -145,6 +145,15 @@ a.navbar-brand img {
     margin-top: 25px;
 }
 
+h6 .form-group, h6 .switch {
+    margin-bottom: 0px;
+}
+
+h6 a {
+    margin-top: 8px;
+    display: inline-block;
+}
+
 /************ Switch Styles **************/
 .switch {
   position: relative;
