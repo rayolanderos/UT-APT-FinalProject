@@ -15,9 +15,12 @@ import com.hopsquad.hopsquadapp.R;
 import com.hopsquad.hopsquadapp.fragments.SettingsFragment;
 import com.hopsquad.hopsquadapp.fragments.TapListFragment;
 import com.hopsquad.hopsquadapp.fragments.UserHistoryFragment;
+import com.hopsquad.hopsquadapp.viewmodels.MainViewModel;
 import com.hopsquad.hopsquadapp.viewmodels.TapListViewModel;
 
 public class MainActivity extends BaseActivity {
+
+    private MainViewModel viewModel;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -39,6 +42,7 @@ public class MainActivity extends BaseActivity {
             }
 
             if (fragment != null) {
+                viewModel.setSelectedNavigationItemId(item.getItemId());
                 switchFragment(fragment);
                 return true;
             }
@@ -59,8 +63,19 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+
+        int selectedNavigationItemId = viewModel.getSelectedNavigationItemId();
+
+        if (selectedNavigationItemId == 0) {
+            navigation.setSelectedItemId(R.id.navigation_home);
+        } else {
+            navigation.setSelectedItemId(selectedNavigationItemId);
+        }
     }
 
     @Override
