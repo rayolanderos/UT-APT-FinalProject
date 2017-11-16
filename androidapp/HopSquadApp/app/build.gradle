@@ -17,6 +17,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.1'
+    }
 }
 
 dependencies {
@@ -32,6 +35,15 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:cardview-v7:26.+'
     compile 'android.arch.lifecycle:extensions:1.0.0'
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile 'javax.inject:javax.inject:1'
+
+    compile 'com.google.dagger:dagger:2.13'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.13'
+    compile 'com.google.dagger:dagger-android:2.13'
+    compile 'com.google.dagger:dagger-android-support:2.13' // if you use the support libraries
+    annotationProcessor 'com.google.dagger:dagger-android-processor:2.13'
 }
 
 

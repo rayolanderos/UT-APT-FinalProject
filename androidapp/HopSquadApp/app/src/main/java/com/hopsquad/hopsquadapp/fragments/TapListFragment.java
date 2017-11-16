@@ -1,6 +1,13 @@
-package com.hopsquad.hopsquadapp;
+package com.hopsquad.hopsquadapp.fragments;
 
-import android.app.Fragment;
+
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 
@@ -9,11 +16,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class TapListFragment extends Fragment {
+import com.hopsquad.hopsquadapp.R;
+import com.hopsquad.hopsquadapp.api.Beer;
+import com.hopsquad.hopsquadapp.api.BeerRepository;
+import com.hopsquad.hopsquadapp.viewmodels.TapListViewModel;
+
+import java.util.List;
+
+public class TapListFragment extends BaseFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -26,6 +39,8 @@ public class TapListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private BeerAdapter mAdapter;
+
+    private TapListViewModel viewModel;
 
 
     public TapListFragment() {
@@ -57,6 +72,10 @@ public class TapListFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        viewModel = ViewModelProviders.of(this).get(TapListViewModel.class);
+        viewModel.setBeerRepository(new BeerRepository());
+        viewModel.init();
     }
 
     @Override
@@ -78,11 +97,23 @@ public class TapListFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(this.getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // TODO: Pass the view model as parameter.
-        mAdapter = new BeerAdapter();
+        viewModel.getTapList().observe(this.getActivity(), new Observer<List<Beer>>() {
+
+            @Override
+            public void onChanged(@Nullable List<Beer> beers) {
+                mAdapter = new BeerAdapter(viewModel);
+                mRecyclerView.setAdapter(mAdapter);
+            }
+        });
     }
 
     private static class BeerAdapter extends RecyclerView.Adapter<BeerHolder> {
+
+        private TapListViewModel tapList;
+
+        public BeerAdapter(TapListViewModel tapList) {
+            this.tapList = tapList;
+        }
 
         @Override
         public BeerHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -94,12 +125,13 @@ public class TapListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(BeerHolder holder, int position) {
-            // TODO: update view with info from viewmodel.
+            Beer b = tapList.getTapList().getValue().get(position);
+            holder.mTitleView.setText(b.name);
         }
 
         @Override
         public int getItemCount() {
-            return 0;
+            return tapList.getTapList().getValue().size();
         }
     }
 
