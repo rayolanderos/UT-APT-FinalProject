@@ -5,6 +5,7 @@ import webapp2
 
 from controllers import tap_list
 from controllers import employees
+from controllers import orders
 from controllers import photos
 
 from services import add_beer
@@ -16,6 +17,12 @@ from services import add_employee
 from services import delete_employee
 from services import update_employee
 from services import get_all_employees
+from services import add_order
+from services import get_order
+from services import get_all_orders
+from services import add_user
+from services import update_user
+from services import get_user
 
 
 templates_dir = os.path.normpath(os.path.dirname(__file__) + '/www/')
@@ -46,6 +53,13 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/api/add_employee', add_employee.AddEmployee, name='add-employee'),
     webapp2.Route('/api/delete_employee', delete_employee.DeleteEmployee, name='delete-employee'),
     webapp2.Route('/api/update_employee', update_employee.UpdateEmployee, name='update-employee'),
-    webapp2.Route('/api/get_all_employees', get_all_employees.GetAllEmployees, name='get-all-employees')
+    webapp2.Route('/api/get_all_employees', get_all_employees.GetAllEmployees, name='get-all-employees'),
+    webapp2.Route('/orders', orders.Orders, name='orders'),
+    webapp2.Route('/api/add_order', add_order.AddOrder, name='add-order'),
+    webapp2.Route('/api/get_order', get_order.GetOrder, name='get-order'),
+    webapp2.Route('/api/get_all_orders', get_all_orders.GetAllOrders, name='get-all-orders'),
+    webapp2.Route('/api/add_user', add_user.AddUser, name='add-user'),
+    webapp2.Route('/api/update_user', update_user.UpdateUser, name='update-user'),
+    webapp2.Route('/api/get_user', get_user.GetUser, name='get-user')
 
 ], debug=True)

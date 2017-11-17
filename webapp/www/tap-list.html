@@ -14,6 +14,13 @@
                       <a data-toggle="collapse" href="#beer-{{ beer.id }}" aria-expanded="true" aria-controls="beer-1">
                         {{ beer.name }}
                       </a>
+                      <div class="form-group pull-right">
+                        <label class="switch">
+                          <input type="checkbox" disabled name="beerOnTapPlaceholder" {% if beer.on_tap: %} checked {% endif %}>
+                          <span class="slider round"></span>
+                        </label>
+                      </div>
+                      <div class="clear"></div>
                     </h6>
                   </div>
                   <div id="beer-{{ beer.id }}" class="collapse" role="tabpanel" aria-labelledby="heading-{{ beer.id }}" data-parent="#accordion">
