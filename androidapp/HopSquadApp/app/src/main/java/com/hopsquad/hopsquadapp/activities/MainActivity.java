@@ -16,11 +16,14 @@ import com.hopsquad.hopsquadapp.fragments.SettingsFragment;
 import com.hopsquad.hopsquadapp.fragments.TapListFragment;
 import com.hopsquad.hopsquadapp.fragments.UserHistoryFragment;
 import com.hopsquad.hopsquadapp.viewmodels.MainViewModel;
-import com.hopsquad.hopsquadapp.viewmodels.TapListViewModel;
 
 public class MainActivity extends BaseActivity {
 
     private MainViewModel viewModel;
+    private final String TAP_LIST_FRAGMENT_TAG = "TAP_LIST";
+    private final String USER_HISTORY_FRAGMENT_TAG = "USER_HISTORY";
+    private final String SETTINGS_FRAGMENT_TAG = "SETTINGS";
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -28,22 +31,45 @@ public class MainActivity extends BaseActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             Fragment fragment = null;
+            FragmentManager manager = getSupportFragmentManager();
+            String tag = null;
+            Class fragmentClass = null;
+
+            if (viewModel.getSelectedNavigationItemId() == item.getItemId()) {
+                return false;
+            }
 
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    fragment = new TapListFragment();
+                    tag = TAP_LIST_FRAGMENT_TAG;
+                    fragmentClass = TapListFragment.class;
                     break;
                 case R.id.navigation_dashboard:
-                    fragment = new UserHistoryFragment();
+                    tag = USER_HISTORY_FRAGMENT_TAG;
+                    fragmentClass = UserHistoryFragment.class;
                     break;
                 case R.id.navigation_notifications:
-                    fragment = new SettingsFragment();
+                    tag = SETTINGS_FRAGMENT_TAG;
+                    fragmentClass = SettingsFragment.class;
                     break;
             }
 
-            if (fragment != null) {
+            fragment = manager.findFragmentByTag(tag);
+
+            if (fragment == null) {
+                try {
+                    fragment = (Fragment) fragmentClass.newInstance();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            if (fragment != null && tag != null) {
                 viewModel.setSelectedNavigationItemId(item.getItemId());
-                switchFragment(fragment);
+                switchFragment(fragment, tag);
                 return true;
             }
             return false;
@@ -51,11 +77,11 @@ public class MainActivity extends BaseActivity {
 
     };
 
-    private void switchFragment(Fragment fragment) {
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.content, fragment);
-        transaction.commit();
+    private void switchFragment(Fragment fragment, String tag) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content, fragment, tag)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override

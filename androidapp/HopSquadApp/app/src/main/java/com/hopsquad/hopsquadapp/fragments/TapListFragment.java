@@ -1,9 +1,13 @@
 package com.hopsquad.hopsquadapp.fragments;
 
 
+import android.app.Activity;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.arch.lifecycle.ViewModelProvider;
@@ -20,12 +24,20 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.hopsquad.hopsquadapp.BuildConfig;
 import com.hopsquad.hopsquadapp.R;
 import com.hopsquad.hopsquadapp.api.Beer;
 import com.hopsquad.hopsquadapp.api.BeerRepository;
 import com.hopsquad.hopsquadapp.viewmodels.TapListViewModel;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class TapListFragment extends BaseFragment {
 
@@ -34,7 +46,7 @@ public class TapListFragment extends BaseFragment {
     private BeerAdapter mAdapter;
 
     private TapListViewModel viewModel;
-
+    private static ExecutorService threadPool = Executors.newFixedThreadPool(4);
 
     public TapListFragment() {
         // Required empty public constructor
@@ -43,7 +55,7 @@ public class TapListFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        this.setRetainInstance(true);
         viewModel = ViewModelProviders.of(this).get(TapListViewModel.class);
         viewModel.setBeerRepository(new BeerRepository());
         viewModel.init();
@@ -63,16 +75,18 @@ public class TapListFragment extends BaseFragment {
         if (mRecyclerView == null) {
             return;
         }
+        Picasso.with(this.getContext()).setIndicatorsEnabled(true);
 
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this.getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        final Context context = this.getContext();
 
         viewModel.getTapList().observe(this.getActivity(), new Observer<List<Beer>>() {
 
             @Override
             public void onChanged(@Nullable List<Beer> beers) {
-                mAdapter = new BeerAdapter(viewModel);
+                mAdapter = new BeerAdapter(viewModel, context);
                 mRecyclerView.setAdapter(mAdapter);
             }
         });
@@ -81,9 +95,12 @@ public class TapListFragment extends BaseFragment {
     private static class BeerAdapter extends RecyclerView.Adapter<BeerHolder> {
 
         private TapListViewModel tapList;
+        private Context context;
 
-        public BeerAdapter(TapListViewModel tapList) {
+        public BeerAdapter(TapListViewModel tapList, Context context) {
+
             this.tapList = tapList;
+            this.context = context;
         }
 
         @Override
@@ -110,6 +127,13 @@ public class TapListFragment extends BaseFragment {
 
                 }
             });
+
+            String thumbnail_uri = b.tap_list_image;
+            if (BuildConfig.DEBUG) {
+                thumbnail_uri = thumbnail_uri.replace("localhost:8080", "10.2.2.2:8080");
+            }
+
+            Picasso.with(context).load(thumbnail_uri).into(holder.mImageView);
         }
 
         @Override
