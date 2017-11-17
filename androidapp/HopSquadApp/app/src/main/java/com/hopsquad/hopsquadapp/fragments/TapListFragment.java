@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -95,8 +96,20 @@ public class TapListFragment extends BaseFragment {
 
         @Override
         public void onBindViewHolder(BeerHolder holder, int position) {
-            Beer b = tapList.getTapList().getValue().get(position);
+            final Beer b = tapList.getTapList().getValue().get(position);
             holder.mTitleView.setText(b.name);
+            holder.mSpinnerView.setSelection(tapList.getQuantityOrdered(b.id));
+            holder.mSpinnerView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    tapList.setQuantityOrdered(b.id, position);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
         }
 
         @Override
