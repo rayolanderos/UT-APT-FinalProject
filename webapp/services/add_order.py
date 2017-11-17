@@ -4,6 +4,7 @@ import logging
 from google.appengine.ext import ndb
 from google.appengine.api import search
 from models.order import Order
+from models.order_beer import OrderBeer
 
 class AddOrder(webapp2.RequestHandler):
 
@@ -12,12 +13,16 @@ class AddOrder(webapp2.RequestHandler):
 		json_string = self.request.body
 		dict_object = json.loads(json_string)
 
-		order_user_id = dict_object['orderUserId']
-		order_order_total = dict_object['orderOrderTotal']
-		order_status = dict_object['orderStatus']
-		order_reward_id = dict_object['orderRewardId']
-		order_discount = dict_object['orderDiscount']
-		order_invoice_number = dict_object['orderInvoiceNumber']
+		order_user_id = int (dict_object['userId'])
+		order_order_total = float ( dict_object['total'] )
+		#order_status = dict_object['status']
+		order_reward_id = int( dict_object['rewardId'] )
+		order_discount = float( dict_object['discount'] )
+		order_invoice_number =  dict_object['invoice']
+		order_beers = dict_object['beers']
+
+		logging.info("****** beers *********")
+		logging.info(order_beers)
 
 		same_invoice_number = Order.query(Order.invoice_number == order_invoice_number).fetch()
 		
@@ -26,13 +31,22 @@ class AddOrder(webapp2.RequestHandler):
 			order = Order(
 				user_id = order_user_id, 
 			    order_total =  order_order_total, 
-			    status = order_status, 
+			    #status = order_status, 
 			    reward_id = order_reward_id, 
 			    discount = order_discount, 
 			    invoice_number = order_invoice_number
 			)
-			order_key = beer.put()
+			order_key = order.put()
 			order_id = str(order_key.id())
+
+			for order_beer in order_beers:
+				order_beer = OrderBeer(
+					order_id = int( order_id ),
+					beer_id = int (order_beer['id'] ),
+					quantity = int (order_beer['quantity'] )
+				)
+				order_beer_key = order_beer.put()
+				order_beer_id = str(order_beer_key.id())
 
 			res = { "msg" : "Order successfully placed", "success": True, "order_id" : order_id }
 			self.response.out.write(json.dumps(res))

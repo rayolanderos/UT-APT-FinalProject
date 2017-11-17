@@ -4,6 +4,8 @@ import logging
 from google.appengine.ext import ndb
 from google.appengine.api import search
 from models.order import Order
+from models.order_beer import OrderBeer
+from models.beer import Beer
 
 class GetAllOrders(webapp2.RequestHandler):
 
@@ -17,6 +19,25 @@ class GetAllOrders(webapp2.RequestHandler):
 		for order in orders:
 			date = order.timestamp
 			date_string = date.strftime('%m/%d/%Y %H:%M:%S')
+
+			order_beer_query = OrderBeer.query( OrderBeer.order_id == order.key.id() ).order(-OrderBeer.quantity)
+			order_beers = order_beer_query.fetch()
+			order_beer_list = []
+			
+			for order_beer in order_beers:
+
+				beer = Beer.get_by_id(order_beer.beer_id)
+				if beer != None:
+					beer_name = beer.name 
+				else:
+					beer_name = "Unknown beer id " + beer_id
+				
+				order_beer_list.append({
+					'beer_id' : order_beer.beer_id,
+					'beer_name' : beer_name,
+					'quantity' : order_beer.quantity
+				})
+
 			order_list.append({
 		    	'id': order.key.id(), 
 		    	'order_total': order.order_total, 
@@ -25,7 +46,8 @@ class GetAllOrders(webapp2.RequestHandler):
 		    	'reward_id': order.reward_id, 
 		    	'discount': order.discount, 
 		    	'invoice_number': order.invoice_number, 
-		    	'timestamp' : date_string
+		    	'timestamp' : date_string, 
+		    	'details' : order_beer_list
 		    })
 
 		self.response.out.write(json.dumps(order_list))

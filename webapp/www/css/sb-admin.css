@@ -210,6 +210,36 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+/********** DataTables custom ***********/
+#orders_dataTable td {
+    font-size: 10px;
+}
+
+#orders_dataTable th,
+#employees_dataTable th ,
+#employees_dataTable td{
+    font-size: 12px;
+}
+
+.dataTables_info {
+    font-size: 12px;
+}
+
+ul.pagination {
+    font-size: 12px;
+}
+
+.dataTables_length label {
+    font-size: 12px;
+}
+
+select.form-control.form-control-sm {
+    font-size: 12px;
+}
+
+.dataTables_filter label {
+    font-size: 12px;
+}
 
 /************ Uploader Styles ************/
 

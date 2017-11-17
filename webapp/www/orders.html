@@ -11,42 +11,44 @@
             </div>
             <div class="card-body">
               <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <table id="orders_dataTable" class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
                     <tr>
-                      <th class="">Id</th>
+                      <th class="">Date</th>
                       <th class="">Customer</th>
                       <th class="">Details</th>
                       <th class="">Invoice</th>
                       <th class="">Reward</th>
                       <th class="">Discount</th>
                       <th class="">Total</th>
-                      <th class="">Date</th>
                     </tr>
                   </thead>
                   <tfoot>
                     <tr>
-                      <th class="">Id</th>
+                      <th class="">Date</th>
                       <th class="">Customer</th>
                       <th class="">Details</th>
                       <th class="">Invoice</th>
                       <th class="">Reward</th>
                       <th class="">Discount</th>
                       <th class="">Total</th>
-                      <th class="">Date</th>
                     </tr>
                   </tfoot>
                   <tbody>
                     {% for order in orders %}
                     <tr id="order-{{ order.id }}">
-                      <td>{{order.id}}</td>
+                      <td>{{order.timestamp}}</td>
                       <td>{{order.user_id}}</td>
-                      <td>{{order.details}}</td>
+                      <td>
+                        {% for detail in order.details %}
+                          {{detail.beer_name}} <b> x{{detail.quantity }} </b>
+                          <br>
+                        {% endfor %}
+                      </td>
                       <td>{{order.invoice_number}}</td>
                       <td>{{order.reward_id}}</td>
                       <td>{{order.discount}}</td>
                       <td>${{order.order_total}}</td>
-                      <td>{{order.timestamp}}</td>
                     </tr>
                     {% endfor %}
                   </tbody>

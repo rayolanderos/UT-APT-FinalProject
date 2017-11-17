@@ -1,6 +1,6 @@
 $(document).ready(function(){
 	
-	$("#dataTable").DataTable({
+	$("#employees_dataTable").DataTable({
 		"columns": [
 			{"name": "name", "orderable": true},
 			{"name": "phone", "orderable": true},

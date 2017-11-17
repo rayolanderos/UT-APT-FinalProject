@@ -13,5 +13,3 @@ class Order(ndb.Model):
     timestamp = ndb.DateTimeProperty(auto_now_add=True)
 
 
-
-

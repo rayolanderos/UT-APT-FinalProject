@@ -1,6 +1,6 @@
 $(document).ready(function(){
 	
-	$("#dataTable").DataTable({
+	$("#orders_dataTable").DataTable({
 
 	});
 });
