@@ -63,12 +63,8 @@ class TapList(webapp2.RequestHandler):
             api_uri = self.uri_for('add-beer', _full=True)
         elif (action == "updateBeer"):
             api_uri = self.uri_for('update-beer', _full=True)
-            logging.info("++++++++++++ updating beer_data +++++++++++++++");
-            logging.info(beer_data);
         elif (action == "deleteBeer"):
             api_uri = self.uri_for('delete-beer', _full=True)
-            logging.info("++++++++++++ deleting beer_data +++++++++++++++");
-            logging.info(beer_data);
 
         result = urlfetch.fetch(
             url=api_uri,

@@ -14,6 +14,13 @@
                       <a data-toggle="collapse" href="#beer-{{ beer.id }}" aria-expanded="true" aria-controls="beer-1">
                         {{ beer.name }}
                       </a>
+                      <div class="form-group pull-right">
+                        <label class="switch">
+                          <input type="checkbox" disabled name="beerOnTapPlaceholder" {% if beer.on_tap: %} checked {% endif %}>
+                          <span class="slider round"></span>
+                        </label>
+                      </div>
+                      <div class="clear"></div>
                     </h6>
                   </div>
                   <div id="beer-{{ beer.id }}" class="collapse" role="tabpanel" aria-labelledby="heading-{{ beer.id }}" data-parent="#accordion">
@@ -72,7 +79,7 @@
                             <label for="beerTapListImage">Tap List Image</label>
                             <div class="box">
                               <div class="js--image-preview {% if beer.tap_list_image != "": %} js--no-default {% endif %}" {% if beer.tap_list_image != "": %} style="background-image:url('{{beer.tap_list_image}}');" {% endif %} ></div>
-                              <div class="upload-options" onClick="clearImageInput('#updateBeerTapListImage-{{beer.id }}');">
+                              <div class="upload-options" data-type="tap-list" data-id="{{beer.id }}" onClick="clearImageInput('#updateBeerTapListImage-{{beer.id }}');">
                                 <label>
                                   <input type="file" class="image-upload" accept="image/*" id="updateBeerTapListImageFile-{{ beer.id }}" name="beerTapListImageFile" value="">
                                 </label>
@@ -83,7 +90,7 @@
                             <label for="beerDescriptionImage">Description Image</label>
                             <div class="box">
                               <div class="js--image-preview {% if beer.tap_list_image != "": %} js--no-default {% endif %}" {% if beer.description_image != "": %} style="background-image:url('{{beer.description_image}}');" {% endif %} ></div>
-                              <div class="upload-options" onClick="clearImageInput('#updateBeerDescriptionImage-{{beer.id }}');">
+                              <div class="upload-options" data-id="{{beer.id }}" data-type="description" onClick="clearImageInput('#updateBeerDescriptionImage-{{beer.id }}');">
                                 <label>
                                   <input type="file" class="image-upload" accept="image/*" name="beerDescriptionImageFile" id="updateBeerDescriptionImageFile-{{ beer.id }}" value="">
                                 </label>
@@ -92,8 +99,8 @@
                           </form>
                         </div>
                       </div>
-                      <button id="updateBeerBtn-{{ beer.id }}" type="button" class="btn btn-primary pull-right updateBeerBtn" data="{{ beer.id }}">Update Beer</button>
-                      <button id="preDeleteBeerBtn-{{ beer.id }}" type="submit" class="btn btn-danger preDeleteBeerBtn pull-right margin-right-10" data-id="{{ beer.id }}" data-name="{{ beer.name }}" data-toggle="modal" data-target="#deleteBeerModal">Delete Beer</button>
+                      <button id="updateBeerBtn-{{ beer.id }}" type="button" class="btn btn-primary pull-right updateBeerBtn" data="{{ beer.id }}">Update Beer <i class="fa fa-check-circle" aria-hidden="true"></i></button>
+                      <button id="preDeleteBeerBtn-{{ beer.id }}" type="submit" class="btn btn-danger preDeleteBeerBtn pull-right margin-right-10" data-id="{{ beer.id }}" data-name="{{ beer.name }}" data-toggle="modal" data-target="#deleteBeerModal">Delete Beer <i class="fa fa-minus-circle" aria-hidden="true"></i></button>
                       <div class="clear"></div>
                     </div>
                   </div>
@@ -162,7 +169,7 @@
                           <label for="beerTapListImage">Tap List Image</label>
                           <div class="box">
                             <div class="js--image-preview"></div>
-                            <div class="upload-options">
+                            <div class="upload-options" data-type="tap-list">
                               <label>
                                 <input type="file" class="image-upload" accept="image/*" id="addBeerTapListImageFile" name="beerTapListImageFile" value="">
                               </label>
@@ -173,7 +180,7 @@
                           <label for="beerDescriptionImage">Description Image</label>
                           <div class="box">
                             <div class="js--image-preview"></div>
-                            <div class="upload-options">
+                            <div class="upload-options" data-type="description">
                               <label>
                                 <input type="file" class="image-upload" accept="image/*" name="beerDescriptionImageFile" id="addBeerDescriptionImageFile" value="">
                               </label>
@@ -182,7 +189,7 @@
                         </form>
                       </div>
                     </div>
-                    <button id="addBeerBtn" type="button" class="btn btn-primary pull-right">Add Beer</button>
+                    <button id="addBeerBtn" type="button" class="btn btn-primary pull-right">Add Beer <i class="fa fa-check-circle" aria-hidden="true"></i></button>
                     <div class="clear"></clear>
                   </div>
                 </div>
@@ -208,7 +215,7 @@
               <form id="deleteBeerForm" method="POST" class="deleteBeerForm"> 
                 <input type="hidden" id="deleteBeerIdInput" name="beerId" value=""/>
                 <input type="hidden" name="action" value="deleteBeer"/>
-                <button id="deleteBeerBtn" type="submit" class="btn btn-danger deleteBeerBtn">Delete</button>
+                <button id="deleteBeerBtn" type="submit" class="btn btn-danger deleteBeerBtn">Delete <i class="fa fa-minus-circle" aria-hidden="true"></i></button>
               </form>
             </div>
           </div>

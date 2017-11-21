@@ -1,0 +1,131 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div id="employee-container" class="main-container">
+      <div class="row">
+        <div class="col-12">
+          <h1>Employees</h1>
+          <p></p>
+          <div class="card mb-3">
+            <div class="card-header">
+              <button type="button" class="btn btn-primary pull-right margin-right-10" data-action="addEmployee" data-name="" data-phone="" data-carrier=""  data-bartending=""  data-id="" data-toggle="modal" data-target="#addEmployeeModal" data-label="Add a new employee" data-btn="Add">Add Employee <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+              <div class="clear"></div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table id="employees_dataTable" class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th class="">Name</th>
+                      <th class="">Phone</th>
+                      <th class="">Carrier</th>
+                      <th class="">Bartending</th>
+                      <th class=""></th>
+                    </tr>
+                  </thead>
+                  <tfoot>
+                    <tr>
+                      <th>Name</th>
+                      <th>Phone</th>
+                      <th>Carrier</th>
+                      <th>Bartending</th>
+                      <th></th>
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                    {% for employee in employees %}
+                    <tr id="employee-{{ employee.id }}">
+                      <td>{{employee.name}}</td>
+                      <td>{{employee.phone}}</td>
+                      <td>{{employee.carrier}}</td>
+                      <td class="text-center">{{employee.bartending}}</td>
+                      <th class="text-center"><button type="button" class="btn btn-info btn-sm" data-action="updateEmployee" data-name="{{employee.name}}" data-phone="{{employee.phone}}" data-carrier="{{ employee.carrier }}"  data-bartending="{{employee.bartending}}"  data-id="{{employee.id}}" data-toggle="modal" data-target="#addEmployeeModal" data-label="Update employee info" data-btn="Update"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                      <button id="preDeleteEmployeeBtn-{{ employee.id }}" type="submit" class="btn btn-danger preDeleteBtn btn-sm" data-id="{{ employee.id }}" data-name="{{ employee.name }}" data-toggle="modal" data-target="#deleteEmployeeModal"><i class="fa fa-minus-circle" aria-hidden="true"></i></button>
+                      </th>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card-footer small text-muted"> </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="addEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="deleteEmployeeModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addEmployeeModalLabel">Add a new employee</h5>
+              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <form id="addEmployeeForm" method="POST">
+              <div class="modal-body">
+                  <div class="form-group">
+                    <label for="addEmployeeName">Employee Name</label>
+                    <input type="text" class="form-control" id="addEmployeeName" name="employeeName" placeholder="Name or Nickname">  
+                  </div>
+                  <div class="form-group">
+                    <label for="addEmployeePhone">Phone Number</label>
+                    <input type="number" class="form-control" id="addEmployeePhone" name="employeePhone" placeholder="(___) - ___ ____">
+                  </div>
+                  <div class="form-group">
+                    <label for="addEmployeeCarrier">Phone Carrier</label>
+                    <select class="form-control" id="addEmployeeCarrier" name="employeeCarrier">
+                      <option value="Verizon">Verizon</option>
+                      <option value="AT&T">AT&amp;T</option>
+                      <option value="T-Mobile">T-Mobile</option>
+                      <option value="Sprint">Sprint</option>
+                      <option value="MetroPCS">MetroPCS</option>
+                      <option value="Cricket">Cricket</option>
+                      <option value="Boost">Boost</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
+                      <input type="checkbox" class="custom-control-input" name="employeeBartending" id="addEmployeeBartending">
+                      <span class="custom-control-indicator"></span>
+                      <span class="custom-control-description">Bartending</span>
+                    </label>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <input type="hidden" id="addEmployeeAction" name="action" value="addEmployee"/>
+                <input type="hidden" id="addEmployeeId" name="employeeId" value=""/>
+                <button id="addEmployeeBtn" type="submit" class="btn btn-primary">Add</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="deleteEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="deleteEmployeeModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Are you sure you want to delete this employee?</h5>
+              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body">Please confirm you want to delete <b id="showEmployeeName"></b>.</div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+              <form id="deleteEmployeeForm" method="POST" class="deleteEmployeeForm"> 
+                <input type="hidden" id="deleteEmployeeIdInput" name="employeeId" value=""/>
+                <input type="hidden" name="action" value="deleteEmployee"/>
+                <button id="deleteEmployeeBtn" type="submit" class="btn btn-danger deleteEmployeeBtn">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="vendor/datatables/jquery.dataTables.js"></script>
+  <script src="vendor/datatables/dataTables.bootstrap4.js"></script>
+  <script src="js/employees.js"></script>
+{% endblock %}
+

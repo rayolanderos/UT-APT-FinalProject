@@ -14,8 +14,6 @@ class PhotoUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self):
         try:
             uploads = self.get_uploads()
-            logging.info("*********** UPLOADS ***********")
-            logging.info(uploads)
 
             if len(uploads) > 0:
                 upload = uploads[0]
