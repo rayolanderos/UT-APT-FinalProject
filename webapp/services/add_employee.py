@@ -12,9 +12,6 @@ class AddEmployee(webapp2.RequestHandler):
 		json_string = self.request.body
 		dict_object = json.loads(json_string)
 
-		logging.info('********* dict object ***********')
-		logging.info(dict_object)
-
 		employee_name = dict_object['employeeName']
 		employee_phone = dict_object['employeePhone']
 		employee_carrier = dict_object['employeeCarrier']

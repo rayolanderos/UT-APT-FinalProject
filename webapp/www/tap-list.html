@@ -79,7 +79,7 @@
                             <label for="beerTapListImage">Tap List Image</label>
                             <div class="box">
                               <div class="js--image-preview {% if beer.tap_list_image != "": %} js--no-default {% endif %}" {% if beer.tap_list_image != "": %} style="background-image:url('{{beer.tap_list_image}}');" {% endif %} ></div>
-                              <div class="upload-options" onClick="clearImageInput('#updateBeerTapListImage-{{beer.id }}');">
+                              <div class="upload-options" data-type="tap-list" data-id="{{beer.id }}" onClick="clearImageInput('#updateBeerTapListImage-{{beer.id }}');">
                                 <label>
                                   <input type="file" class="image-upload" accept="image/*" id="updateBeerTapListImageFile-{{ beer.id }}" name="beerTapListImageFile" value="">
                                 </label>
@@ -90,7 +90,7 @@
                             <label for="beerDescriptionImage">Description Image</label>
                             <div class="box">
                               <div class="js--image-preview {% if beer.tap_list_image != "": %} js--no-default {% endif %}" {% if beer.description_image != "": %} style="background-image:url('{{beer.description_image}}');" {% endif %} ></div>
-                              <div class="upload-options" onClick="clearImageInput('#updateBeerDescriptionImage-{{beer.id }}');">
+                              <div class="upload-options" data-id="{{beer.id }}" data-type="description" onClick="clearImageInput('#updateBeerDescriptionImage-{{beer.id }}');">
                                 <label>
                                   <input type="file" class="image-upload" accept="image/*" name="beerDescriptionImageFile" id="updateBeerDescriptionImageFile-{{ beer.id }}" value="">
                                 </label>
@@ -169,7 +169,7 @@
                           <label for="beerTapListImage">Tap List Image</label>
                           <div class="box">
                             <div class="js--image-preview"></div>
-                            <div class="upload-options">
+                            <div class="upload-options" data-type="tap-list">
                               <label>
                                 <input type="file" class="image-upload" accept="image/*" id="addBeerTapListImageFile" name="beerTapListImageFile" value="">
                               </label>
@@ -180,7 +180,7 @@
                           <label for="beerDescriptionImage">Description Image</label>
                           <div class="box">
                             <div class="js--image-preview"></div>
-                            <div class="upload-options">
+                            <div class="upload-options" data-type="description">
                               <label>
                                 <input type="file" class="image-upload" accept="image/*" name="beerDescriptionImageFile" id="addBeerDescriptionImageFile" value="">
                               </label>

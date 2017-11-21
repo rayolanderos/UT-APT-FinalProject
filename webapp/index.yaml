@@ -14,9 +14,9 @@ indexes:
   properties:
   - name: order_id
   - name: quantity
-    direction: desc
 
 - kind: OrderBeer
   properties:
   - name: order_id
   - name: quantity
+    direction: desc

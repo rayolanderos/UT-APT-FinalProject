@@ -7,7 +7,7 @@ class Beer(ndb.Model):
     name = ndb.StringProperty()
     style = ndb.StringProperty()
     tap_list_image = ndb.StringProperty()
-    description = ndb.StringProperty()
+    description = ndb.TextProperty()
     description_image = ndb.StringProperty()
     price = ndb.FloatProperty()
     abv = ndb.FloatProperty()

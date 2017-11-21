@@ -27,6 +27,7 @@ class GetAllOrders(webapp2.RequestHandler):
 			for order_beer in order_beers:
 
 				beer = Beer.get_by_id(order_beer.beer_id)
+				
 				if beer != None:
 					beer_name = beer.name 
 				else:

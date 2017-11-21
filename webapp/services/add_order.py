@@ -21,9 +21,6 @@ class AddOrder(webapp2.RequestHandler):
 		order_invoice_number =  dict_object['invoice']
 		order_beers = dict_object['beers']
 
-		logging.info("****** beers *********")
-		logging.info(order_beers)
-
 		same_invoice_number = Order.query(Order.invoice_number == order_invoice_number).fetch()
 		
 		if not same_invoice_number:
@@ -37,7 +34,7 @@ class AddOrder(webapp2.RequestHandler):
 			    invoice_number = order_invoice_number
 			)
 			order_key = order.put()
-			order_id = str(order_key.id())
+			order_id = order_key.id()
 
 			for order_beer in order_beers:
 				order_beer = OrderBeer(

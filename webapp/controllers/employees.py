@@ -51,12 +51,8 @@ class Employees(webapp2.RequestHandler):
             api_uri = self.uri_for('add-employee', _full=True)
         elif (action == "updateEmployee"):
             api_uri = self.uri_for('update-employee', _full=True)
-            logging.info("++++++++++++ updating employee_data +++++++++++++++");
-            logging.info(employee_data);
         elif (action == "deleteEmployee"):
             api_uri = self.uri_for('delete-employee', _full=True)
-            logging.info("++++++++++++ deleting beer_data +++++++++++++++");
-            logging.info(employee_data);
 
         result = urlfetch.fetch(
             url=api_uri,
