@@ -12,9 +12,6 @@ class UpdateBeer(webapp2.RequestHandler):
 		json_string = self.request.body
 		dict_object = json.loads(json_string)
 
-		# logging.info('********* dict object ***********')
-		# logging.info(dict_object)
-
 		beer_id = int( dict_object['beerId'] ) 
 		beer_name = dict_object['beerName']
 		beer_style = dict_object['beerStyle']

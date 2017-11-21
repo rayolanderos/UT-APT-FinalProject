@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div id="employee-container" class="main-container">
+      <div class="row">
+        <div class="col-12">
+          <h1>Orders</h1>
+          <p></p>
+          <div class="card mb-3">
+            <div class="card-header">
+              
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table id="orders_dataTable" class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th class="">Date</th>
+                      <th class="">Customer</th>
+                      <th class="">Details</th>
+                      <th class="">Invoice</th>
+                      <th class="">Reward</th>
+                      <th class="">Discount</th>
+                      <th class="">Total</th>
+                    </tr>
+                  </thead>
+                  <tfoot>
+                    <tr>
+                      <th class="">Date</th>
+                      <th class="">Customer</th>
+                      <th class="">Details</th>
+                      <th class="">Invoice</th>
+                      <th class="">Reward</th>
+                      <th class="">Discount</th>
+                      <th class="">Total</th>
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                    {% for order in orders %}
+                    <tr id="order-{{ order.id }}">
+                      <td>{{order.timestamp}}</td>
+                      <td>{{order.user_id}}</td>
+                      <td>
+                        {% for detail in order.details %}
+                          {{detail.beer_name}} <b> x{{detail.quantity }} </b>
+                          <br>
+                        {% endfor %}
+                      </td>
+                      <td>{{order.invoice_number}}</td>
+                      <td>{{order.reward_id}}</td>
+                      <td>{{order.discount}}</td>
+                      <td>${{order.order_total}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card-footer small text-muted"> </div>
+          </div>
+        </div>
+      </div>
+      
+{% endblock %}
+
+{% block scripts %}
+  <script src="vendor/datatables/jquery.dataTables.js"></script>
+  <script src="vendor/datatables/dataTables.bootstrap4.js"></script>
+  <script src="js/orders.js"></script>
+{% endblock %}
+

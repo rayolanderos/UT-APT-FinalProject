@@ -117,7 +117,7 @@ function postUploadCallback(formAction, id=""){
 
   else if(formAction == "update"){
     var updateBeerTapListImage = $("#updateBeerTapListImage-"+id).val();
-    var updateBeerDescriptionImage = $("#addBeerDescriptionImage-"+id).val();
+    var updateBeerDescriptionImage = $("#updateBeerDescriptionImage-"+id).val();
     if(updateBeerTapListImage != "" && updateBeerTapListImage != "")
     $("#updateBeerForm-"+id).submit();
   }
