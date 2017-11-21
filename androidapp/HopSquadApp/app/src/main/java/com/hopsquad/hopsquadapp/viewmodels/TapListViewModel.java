@@ -4,22 +4,20 @@ package com.hopsquad.hopsquadapp.viewmodels;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.widget.ImageView;
 
-import com.hopsquad.hopsquadapp.api.Beer;
-import com.hopsquad.hopsquadapp.api.BeerRepository;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.hopsquad.hopsquadapp.models.Beer;
+import com.hopsquad.hopsquadapp.api.WebServiceRepository;
+import com.hopsquad.hopsquadapp.models.BeerAndQuantity;
+import com.hopsquad.hopsquadapp.models.Order;
 
 import java.lang.ref.WeakReference;
-import java.net.URL;
-import java.util.Dictionary;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.inject.Inject;
 
 /**
  * Created by memo on 15/11/17.
@@ -28,7 +26,7 @@ import javax.inject.Inject;
 public class TapListViewModel extends ViewModel {
 
     private LiveData<List<Beer>> tapList;
-    private BeerRepository beerRepo;
+    private WebServiceRepository webRepo;
 
     private HashMap<String, Integer> orderList;
 
@@ -40,11 +38,11 @@ public class TapListViewModel extends ViewModel {
     }
 
     public void init() {
-        tapList = beerRepo.getAllBeers();
+        tapList = webRepo.getAllBeers();
     }
 
-    public void setBeerRepository(BeerRepository repo) {
-        beerRepo = repo;
+    public void setRepository(WebServiceRepository repo) {
+        webRepo = repo;
     }
 
     public LiveData<List<Beer>> getTapList() {
@@ -68,33 +66,62 @@ public class TapListViewModel extends ViewModel {
         orderList.clear();
     }
 
-    public void getAndImageFromUrl(String url, ImageView view) {
-
-
-
+    public LiveData<Order> placeOrder() {
+        Order order = buildOrder();
+        return webRepo.placeOrder(order);
     }
 
-//    // based on: https://android-developers.googleblog.com/2010/07/multithreading-for-performance.html
-//    static class BitmapDownloaderTask extends AsyncTask<String, Void, Bitmap> {
-//        private final WeakReference<ImageView> imageViewRef;
-//
-//        public BitmapDownloaderTask(ImageView imageView) {
-//            imageViewRef = new WeakReference<ImageView>(imageView);
-//        }
-//
-//        @Override
-//        protected Bitmap doInBackground(String... params) {
-//            URL url = new URL(params[0]);
-//
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Bitmap result) {
-//
-//            if (imageViewRef.get() != null) {
-//                imageViewRef.get().setImageBitmap(result);
-//            }
-//        }
-//    }
+    private Order buildOrder() {
+        Order order = new Order();
+
+        order.discount = 0;
+        // TODO: Change this once Stripe is implemented.
+        order.invoice = "12039489384";
+        order.rewardId = 0;
+        order.userId = getUserId();
+        // TODO: Add the rest of properties
+
+        computeTotal(order);
+        return order;
+    }
+
+    private void computeTotal(Order order) {
+        float total = 0.0f;
+        List<Beer> beers = tapList.getValue();
+        ArrayList<BeerAndQuantity> quantitites = new ArrayList<>();
+
+        for (Map.Entry<String, Integer> beerAndQty : orderList.entrySet()) {
+            Beer beer = null;
+            String beerId = beerAndQty.getKey();
+            int quantity = beerAndQty.getValue();
+
+            if (quantity == 0) {
+                continue;
+            }
+
+            for(Beer b : beers) {
+                if (b.id.equals(beerId)) {
+                    beer = b;
+                    break;
+                }
+            }
+
+            if (beer == null) {
+                throw new RuntimeException(String.format("Beer with id %s not found.", beerId));
+            }
+
+            quantitites.add(new BeerAndQuantity(beerId, quantity));
+
+            total += beer.price * quantity;
+        }
+
+        order.beers = quantitites;
+        order.total = total;
+    }
+
+    private String getUserId() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        return user.getUid();
+    }
 
 }

@@ -1,20 +1,14 @@
 package com.hopsquad.hopsquadapp.fragments;
 
 
-import android.app.Activity;
-import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
-
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,27 +20,22 @@ import android.widget.TextView;
 
 import com.hopsquad.hopsquadapp.BuildConfig;
 import com.hopsquad.hopsquadapp.R;
-import com.hopsquad.hopsquadapp.api.Beer;
-import com.hopsquad.hopsquadapp.api.BeerRepository;
+import com.hopsquad.hopsquadapp.models.Beer;
+import com.hopsquad.hopsquadapp.api.WebServiceRepository;
+import com.hopsquad.hopsquadapp.models.Order;
 import com.hopsquad.hopsquadapp.viewmodels.TapListViewModel;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class TapListFragment extends BaseFragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private BeerAdapter mAdapter;
+    private FloatingActionButton placeOrderBtn;
 
     private TapListViewModel viewModel;
-    private static ExecutorService threadPool = Executors.newFixedThreadPool(4);
 
     public TapListFragment() {
         // Required empty public constructor
@@ -55,9 +44,9 @@ public class TapListFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setRetainInstance(true);
+
         viewModel = ViewModelProviders.of(this).get(TapListViewModel.class);
-        viewModel.setBeerRepository(new BeerRepository());
+        viewModel.setRepository(new WebServiceRepository());
         viewModel.init();
     }
 
@@ -67,8 +56,43 @@ public class TapListFragment extends BaseFragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_tap_list, container, false);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.beerListRecyclerView);
-        initializeRecyclerView();
+        placeOrderBtn = (FloatingActionButton) v.findViewById(R.id.placeOrderBtn);
+
+        initializeViews();
         return v;
+    }
+
+    private void initializeViews() {
+        initializePlaceOrderButton();
+        initializeRecyclerView();
+    }
+
+    private void initializePlaceOrderButton() {
+        placeOrderBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                placeOrder();
+            }
+        });
+    }
+
+    private void placeOrder() {
+
+        // TODO Add confirmation DialogFragment
+
+        // TODO Add loading spinner
+
+        final LiveData<Order> orderLiveData = viewModel.placeOrder();
+        final TapListFragment thisFragment = this;
+        orderLiveData.observe(this, new Observer<Order>() {
+            @Override
+            public void onChanged(@Nullable Order order) {
+                viewModel.clearOrder();
+                mRecyclerView.setAdapter(mAdapter); // Setting the adapter again refreshes the list.
+                orderLiveData.removeObservers(thisFragment);
+            }
+        });
+
     }
 
     private void initializeRecyclerView() {
@@ -129,10 +153,6 @@ public class TapListFragment extends BaseFragment {
             });
 
             String thumbnail_uri = b.tap_list_image;
-            if (BuildConfig.DEBUG) {
-                thumbnail_uri = thumbnail_uri.replace("localhost:8080", "10.2.2.2:8080");
-            }
-
             Picasso.with(context).load(thumbnail_uri).into(holder.mImageView);
         }
 
