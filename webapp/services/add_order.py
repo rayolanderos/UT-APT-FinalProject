@@ -27,21 +27,12 @@ class AddOrder(webapp2.RequestHandler):
 			beer = '\n{} x{}'.format(beer_name, beer_quantity)
 			beer_list += beer;
 
-		msg_body = 'Beer Order for {}! {}'.format(customer.name, beer_list)
-
-		logging.info("******* Msg Body ********")
-		logging.info(msg_body)
-		
+		msg_body = 'Beer Order for {}! {}'.format(customer.name, beer_list)		
 
 		bartending_employees = Employee.query(Employee.bartending == True).fetch()
 
-		logging.info("******* Employees ********")
-		logging.info(bartending_employees)
-
 		for employee in bartending_employees:
 			msg_to = "+1"+employee.phone
-			logging.info("******* Employee Phone ********")
-			logging.info(msg_to)
 			
 			rv = client.messages.create(to=msg_to, from_="+15126400776 ",body=msg_body)
 			# self.response.write(str(rv))

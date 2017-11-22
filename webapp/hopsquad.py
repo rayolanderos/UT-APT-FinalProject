@@ -40,13 +40,11 @@ class MainPage(webapp2.RequestHandler):
         user = users.get_current_user()
 
         if user:
-            nickname = user.nickname()
             logout_url = users.create_logout_url('/')
 
             self.redirect('/tap_list')
         else:
             login_url = users.create_login_url('/')
-            greeting = 'Please log in to continue using the app'
 
             template_values = {
                 'greeting': greeting,
