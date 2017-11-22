@@ -26,6 +26,7 @@ import com.hopsquad.hopsquadapp.models.Order;
 import com.hopsquad.hopsquadapp.viewmodels.TapListViewModel;
 import com.squareup.picasso.Picasso;
 
+import java.text.NumberFormat;
 import java.util.List;
 
 public class TapListFragment extends BaseFragment {
@@ -139,6 +140,8 @@ public class TapListFragment extends BaseFragment {
         public void onBindViewHolder(BeerHolder holder, int position) {
             final Beer b = tapList.getTapList().getValue().get(position);
             holder.mTitleView.setText(b.name);
+            holder.mAlcoholByVolumeView.setText(String.format("%2.1f%%", b.abv));
+            holder.mPriceView.setText(NumberFormat.getCurrencyInstance().format(b.price));
             holder.mSpinnerView.setSelection(tapList.getQuantityOrdered(b.id));
             holder.mSpinnerView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -166,12 +169,16 @@ public class TapListFragment extends BaseFragment {
         public ImageView mImageView;
         public TextView mTitleView;
         public Spinner mSpinnerView;
+        public TextView mAlcoholByVolumeView;
+        public TextView mPriceView;
 
         public BeerHolder (View view) {
             super(view);
             mImageView = view.findViewById(R.id.beerImage);
             mTitleView = view.findViewById(R.id.beerNameView);
             mSpinnerView = view.findViewById(R.id.beerSpinner);
+            mAlcoholByVolumeView = view.findViewById(R.id.alcoholByVolumeText);
+            mPriceView = view.findViewById(R.id.beerPriceText);
         }
     }
 

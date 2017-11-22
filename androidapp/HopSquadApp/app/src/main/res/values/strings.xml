@@ -28,6 +28,9 @@
     <string name="account_signout">Sign Out</string>
     <string name="payment_cvv">CVV</string>
     <string name="payment_expiration">Exp</string>
+    <string name="BeerPricePlaceHolder">$00.00</string>
+    <string name="beerImageContentDescription">An image of a beer</string>
+    <string name="ABVPlaceholder">99.9%</string>
 
     <string-array name="beer_order_amount">
         <item>0</item>
