@@ -5,7 +5,7 @@ android {
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.hopsquad.hopsquadapp"
-        minSdkVersion 21
+        minSdkVersion 22
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -19,6 +19,12 @@ android {
     }
     configurations.all {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.1'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    productFlavors {
     }
 }
 
@@ -40,5 +46,6 @@ dependencies {
     compile 'javax.inject:javax.inject:1'
     compile 'com.squareup.picasso:picasso:2.5.2'
 }
+
 
 apply plugin: 'com.google.gms.google-services'
