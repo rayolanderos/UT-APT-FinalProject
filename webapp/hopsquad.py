@@ -3,6 +3,8 @@ import os
 import jinja2
 import webapp2
 
+from google.appengine.api import users
+
 from controllers import tap_list
 from controllers import employees
 from controllers import orders
@@ -35,9 +37,25 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 class MainPage(webapp2.RequestHandler):
 
     def get(self):
-        
-        self.redirect('/tap_list')
+        user = users.get_current_user()
 
+        if user:
+            nickname = user.nickname()
+            logout_url = users.create_logout_url('/')
+
+            self.redirect('/tap_list')
+        else:
+            login_url = users.create_login_url('/')
+            greeting = 'Please log in to continue using the app'
+
+            template_values = {
+                'greeting': greeting,
+                'login_url': login_url
+            }
+
+            template = JINJA_ENVIRONMENT.get_template('login.html')
+            self.response.write(template.render(template_values))
+        
 
 app = webapp2.WSGIApplication([
     webapp2.Route('/', MainPage, name='home'),
