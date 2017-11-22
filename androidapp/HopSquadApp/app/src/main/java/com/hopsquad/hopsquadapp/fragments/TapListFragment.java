@@ -63,6 +63,23 @@ public class TapListFragment extends BaseFragment {
         return v;
     }
 
+    public void confirmOrder() {
+
+        // TODO Add loading spinner
+
+        final LiveData<Order> orderLiveData = viewModel.placeOrder();
+        final TapListFragment thisFragment = this;
+        orderLiveData.observe(this, new Observer<Order>() {
+            @Override
+            public void onChanged(@Nullable Order order) {
+                thisFragment.showToast(R.string.order_succesfully_placed_msg);
+                viewModel.clearOrder();
+                mRecyclerView.setAdapter(mAdapter); // Setting the adapter again refreshes the list.
+                orderLiveData.removeObservers(thisFragment);
+            }
+        });
+    }
+
     private void initializeViews() {
         initializePlaceOrderButton();
         initializeRecyclerView();
@@ -72,28 +89,14 @@ public class TapListFragment extends BaseFragment {
         placeOrderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                placeOrder();
+                displayOrderConfirmation();
             }
         });
     }
 
-    private void placeOrder() {
-
-        // TODO Add confirmation DialogFragment
-
-        // TODO Add loading spinner
-
-        final LiveData<Order> orderLiveData = viewModel.placeOrder();
-        final TapListFragment thisFragment = this;
-        orderLiveData.observe(this, new Observer<Order>() {
-            @Override
-            public void onChanged(@Nullable Order order) {
-                viewModel.clearOrder();
-                mRecyclerView.setAdapter(mAdapter); // Setting the adapter again refreshes the list.
-                orderLiveData.removeObservers(thisFragment);
-            }
-        });
-
+    private void displayOrderConfirmation() {
+        ConfirmOrderFragment confirmDialog = new ConfirmOrderFragment();
+        confirmDialog.show(this.getFragmentManager(), "CONFIRM_ORDER");
     }
 
     private void initializeRecyclerView() {

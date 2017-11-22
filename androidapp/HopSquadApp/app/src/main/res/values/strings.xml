@@ -44,5 +44,8 @@
         <item>8</item>
         <item>9</item>
     </string-array>
+    <string name="confirm_order_dialog_button">Place Order</string>
+    <string name="cancel_order_button_dialog">Cancel</string>
+    <string name="order_succesfully_placed_msg">Hey! You just got some beer!</string>
 
 </resources>

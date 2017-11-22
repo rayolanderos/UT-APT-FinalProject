@@ -2,8 +2,8 @@ package com.hopsquad.hopsquadapp.viewmodels;
 
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.graphics.Bitmap;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -12,12 +12,11 @@ import com.hopsquad.hopsquadapp.api.WebServiceRepository;
 import com.hopsquad.hopsquadapp.models.BeerAndQuantity;
 import com.hopsquad.hopsquadapp.models.Order;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 /**
  * Created by memo on 15/11/17.
@@ -27,14 +26,13 @@ public class TapListViewModel extends ViewModel {
 
     private LiveData<List<Beer>> tapList;
     private WebServiceRepository webRepo;
-
-    private HashMap<String, Integer> orderList;
-
-    private ConcurrentHashMap<String, WeakReference<Bitmap>> beerImages;
+    private HashMap<Beer, Integer> orderInfo;
+    private MutableLiveData<Float> liveTotal;
 
     public TapListViewModel() {
-        orderList = new HashMap<>();
-        beerImages = new ConcurrentHashMap<>();
+        orderInfo = new HashMap<>();
+        liveTotal = new MutableLiveData<>();
+        liveTotal.setValue(0.0f);
     }
 
     public void init() {
@@ -50,25 +48,51 @@ public class TapListViewModel extends ViewModel {
     }
 
     public int getQuantityOrdered(String beerId) {
-        if (orderList.containsKey(beerId)) {
-
-            return orderList.get(beerId);
+        if (orderInfo.containsKey(beerId)) {
+            return orderInfo.get(beerId);
         }
 
-        return 0;
+        return 0; // Maybe there's a better value?
     }
 
     public void setQuantityOrdered(String beerId, int quantity) {
-        orderList.put(beerId, quantity);
+        float currentTotal = liveTotal.getValue();
+
+        Beer beer = getBeerById(beerId);
+        Integer currentQty = orderInfo.get(beer);
+
+        if (currentQty == null || currentQty.intValue() == 0) {
+            currentTotal += quantity * beer.price;
+        } else {
+            currentTotal += (quantity - currentQty.intValue()) * beer.price;
+        }
+
+        liveTotal.setValue(currentTotal);
+        orderInfo.put(beer, quantity);
+    }
+
+    private Beer getBeerById(String id) {
+        List<Beer> currentTapList = tapList.getValue();
+        for (Beer beer : currentTapList) {
+            if (beer.id.equals(id)) {
+                return beer;
+            }
+        }
+        return null;
     }
 
     public void clearOrder() {
-        orderList.clear();
+        orderInfo.clear();
+        liveTotal.setValue(0.0f);
     }
 
     public LiveData<Order> placeOrder() {
         Order order = buildOrder();
         return webRepo.placeOrder(order);
+    }
+
+    public float getOrderTotal() {
+        return liveTotal.getValue();
     }
 
     private Order buildOrder() {
@@ -79,44 +103,27 @@ public class TapListViewModel extends ViewModel {
         order.invoice = "12039489384";
         order.rewardId = 0;
         order.userId = getUserId();
+        order.beers = getBeersByQuantity();
         // TODO: Add the rest of properties
 
-        computeTotal(order);
         return order;
     }
 
-    private void computeTotal(Order order) {
-        float total = 0.0f;
-        List<Beer> beers = tapList.getValue();
-        ArrayList<BeerAndQuantity> quantitites = new ArrayList<>();
+    private List<BeerAndQuantity> getBeersByQuantity() {
+        ArrayList<BeerAndQuantity> quantities = new ArrayList<>();
 
-        for (Map.Entry<String, Integer> beerAndQty : orderList.entrySet()) {
-            Beer beer = null;
-            String beerId = beerAndQty.getKey();
+        for (Map.Entry<Beer, Integer> beerAndQty : orderInfo.entrySet()) {
+            Beer beer = beerAndQty.getKey();
             int quantity = beerAndQty.getValue();
 
             if (quantity == 0) {
                 continue;
             }
 
-            for(Beer b : beers) {
-                if (b.id.equals(beerId)) {
-                    beer = b;
-                    break;
-                }
-            }
-
-            if (beer == null) {
-                throw new RuntimeException(String.format("Beer with id %s not found.", beerId));
-            }
-
-            quantitites.add(new BeerAndQuantity(beerId, quantity));
-
-            total += beer.price * quantity;
+            quantities.add(new BeerAndQuantity(beer.id, quantity));
         }
 
-        order.beers = quantitites;
-        order.total = total;
+        return quantities;
     }
 
     private String getUserId() {
