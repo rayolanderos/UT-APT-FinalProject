@@ -2,6 +2,7 @@ package com.hopsquad.hopsquadapp.api;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -25,7 +26,7 @@ public class WebServiceRepository {
     // This is for debugging purposes on the simulator
     // TODO: switch to actual project on Google Cloud
     public static final String SIMULATOR_BASE_URL = "http://10.0.2.2:8080/";
-    public static final String APP_BASE_URL = "https://hopsquadatx.appspot.com";
+    public static final String APP_BASE_URL = "https://hopsquad-app.appspot.com/";
 
     private static Gson gson = new GsonBuilder().setDateFormat("MM/dd/yyyy").create();
 
@@ -48,7 +49,7 @@ public class WebServiceRepository {
 
             @Override
             public void onFailure(Call<List<Beer>> call, Throwable t) {
-
+                t.printStackTrace();
             }
         });
 
@@ -62,12 +63,13 @@ public class WebServiceRepository {
         webservice.addOrder(order).enqueue(new Callback<Order>() {
             @Override
             public void onResponse(Call<Order> call, Response<Order> response) {
-                data.setValue(response.body());
+                Order value = response.isSuccessful() ? response.body() : new Order();
+                data.setValue(value);
             }
 
             @Override
             public void onFailure(Call<Order> call, Throwable t) {
-
+                t.printStackTrace();
             }
         });
 

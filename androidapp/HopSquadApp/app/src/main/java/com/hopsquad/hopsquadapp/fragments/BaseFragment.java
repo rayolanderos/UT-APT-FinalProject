@@ -11,8 +11,8 @@ import android.widget.Toast;
 public class BaseFragment extends Fragment {
 
     protected void showToast(int resourceId) {
-        Context context = getActivity().getApplicationContext();
+        Context context = getActivity();
         String message = context.getResources().getString(resourceId);
-        Toast.makeText(context, message, Toast.LENGTH_SHORT);
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 }

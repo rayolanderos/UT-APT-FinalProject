@@ -63,29 +63,19 @@ public class TapListFragment extends BaseFragment {
         return v;
     }
 
-    public void confirmOrder() {
-
-        // TODO Add loading spinner
-
-        final LiveData<Order> orderLiveData = viewModel.placeOrder();
-        final TapListFragment thisFragment = this;
-        orderLiveData.observe(this, new Observer<Order>() {
-            @Override
-            public void onChanged(@Nullable Order order) {
-                thisFragment.showToast(R.string.order_succesfully_placed_msg);
-                viewModel.clearOrder();
-                mRecyclerView.setAdapter(mAdapter); // Setting the adapter again refreshes the list.
-                orderLiveData.removeObservers(thisFragment);
-            }
-        });
-    }
-
     private void initializeViews() {
         initializePlaceOrderButton();
         initializeRecyclerView();
     }
 
     private void initializePlaceOrderButton() {
+        viewModel.getLiveTotal().observe(this, (newTotal) -> {
+
+            // TODO Give better feedback of the state of the button
+            boolean enabled = newTotal != null && newTotal.floatValue() > 0;
+            placeOrderBtn.setEnabled(enabled);
+        });
+
         placeOrderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,7 +105,10 @@ public class TapListFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable List<Beer> beers) {
                 mAdapter = new BeerAdapter(viewModel, context);
+                mAdapter.isRefreshing = true;
                 mRecyclerView.setAdapter(mAdapter);
+                mAdapter.isRefreshing = false;
+
             }
         });
     }
@@ -124,6 +117,7 @@ public class TapListFragment extends BaseFragment {
 
         private TapListViewModel tapList;
         private Context context;
+        private boolean isRefreshing;
 
         public BeerAdapter(TapListViewModel tapList, Context context) {
 
@@ -145,11 +139,14 @@ public class TapListFragment extends BaseFragment {
             holder.mTitleView.setText(b.name);
             holder.mAlcoholByVolumeView.setText(String.format("%2.1f%%", b.abv));
             holder.mPriceView.setText(NumberFormat.getCurrencyInstance().format(b.price));
-            holder.mSpinnerView.setSelection(tapList.getQuantityOrdered(b.id));
+
+            final int[] check = { 0 };
             holder.mSpinnerView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    tapList.setQuantityOrdered(b.id, position);
+                    if ((++check[0]) > 1) {
+                        tapList.setQuantityOrdered(b.id, position);
+                    }
                 }
 
                 @Override
@@ -157,6 +154,7 @@ public class TapListFragment extends BaseFragment {
 
                 }
             });
+            holder.mSpinnerView.setSelection(tapList.getQuantityOrdered(b.id), true);
 
             String thumbnail_uri = b.tap_list_image;
             Picasso.with(context).load(thumbnail_uri).into(holder.mImageView);

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.Predicate;
 
 /**
@@ -60,12 +61,8 @@ public class TapListViewModel extends ViewModel {
 
         Beer beer = getBeerById(beerId);
         Integer currentQty = orderInfo.get(beer);
-
-        if (currentQty == null || currentQty.intValue() == 0) {
-            currentTotal += quantity * beer.price;
-        } else {
-            currentTotal += (quantity - currentQty.intValue()) * beer.price;
-        }
+        currentQty = currentQty == null ? new Integer(0) : currentQty;
+        currentTotal += (quantity - currentQty.intValue()) * beer.price;
 
         liveTotal.setValue(currentTotal);
         orderInfo.put(beer, quantity);
@@ -91,6 +88,10 @@ public class TapListViewModel extends ViewModel {
         return webRepo.placeOrder(order);
     }
 
+    public LiveData<Float> getLiveTotal() {
+        return liveTotal;
+    }
+
     public float getOrderTotal() {
         return liveTotal.getValue();
     }
@@ -99,14 +100,26 @@ public class TapListViewModel extends ViewModel {
         Order order = new Order();
 
         order.discount = 0;
-        // TODO: Change this once Stripe is implemented.
-        order.invoice = "12039489384";
+
+        order.invoice = generatePseudoInvoice();
         order.rewardId = 0;
         order.userId = getUserId();
         order.beers = getBeersByQuantity();
         // TODO: Add the rest of properties
 
         return order;
+    }
+
+    private String generatePseudoInvoice() {
+        // TODO: Change this once Stripe is implemented.
+        int length = 10;
+        Random r = new Random();
+        StringBuilder sb = new StringBuilder();
+        while (length-- > 0) {
+            sb.append(r.nextInt(10));
+        }
+
+        return sb.toString();
     }
 
     private List<BeerAndQuantity> getBeersByQuantity() {
