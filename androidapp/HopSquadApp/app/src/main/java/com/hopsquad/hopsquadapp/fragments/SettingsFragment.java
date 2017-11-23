@@ -1,4 +1,4 @@
-package com.hopsquad.hopsquadapp;
+package com.hopsquad.hopsquadapp.fragments;
 
 import android.app.Fragment;
 
@@ -9,8 +9,10 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hopsquad.hopsquadapp.R;
 
-public class SettingsFragment extends Fragment {
+
+public class SettingsFragment extends BaseFragment {
     // TODO: Rename parameter arguments, choose names that match if needed
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";

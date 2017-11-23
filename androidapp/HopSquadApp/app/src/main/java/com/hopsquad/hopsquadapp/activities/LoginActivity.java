@@ -1,4 +1,4 @@
-package com.hopsquad.hopsquadapp;
+package com.hopsquad.hopsquadapp.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -26,12 +26,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.hopsquad.hopsquadapp.R;
 
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
     // UI references.
     private AutoCompleteTextView mEmailView;
