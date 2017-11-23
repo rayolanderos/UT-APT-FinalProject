@@ -9,3 +9,14 @@
 
 # Android Studio
 **/.idea
+
+# Twilio Dependencies
+webapp/six.py
+webapp/tiwlio
+webapp/urllib3
+webapp/requests
+webapp/httplib2
+webapp/idna
+webapp/chardet
+webapp/pytz
+webapp/certifi

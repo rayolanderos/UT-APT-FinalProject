@@ -1,6 +1,9 @@
 import webapp2
 import json
 import logging
+
+from datetime import datetime
+
 from google.appengine.ext import ndb
 from google.appengine.api import search
 from models.user import User
@@ -26,7 +29,7 @@ class AddUser(webapp2.RequestHandler):
 				name = user_name, 
 				payment_key = user_payment_key,
 				email = user_email,
-				date_of_birth = user_date_of_birth
+				date_of_birth = datetime.strptime(user_date_of_birth, '%Y-%m-%d %H:%M:%S')
 			)
 			user_key = user.put()
 			user_id = str(user_key.id())
