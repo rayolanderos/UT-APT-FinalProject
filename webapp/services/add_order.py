@@ -18,7 +18,9 @@ class AddOrder(webapp2.RequestHandler):
 		auth_token = ""
 		client = Client(account_sid, auth_token)
 
-		customer = User.query(User.fb_user_id == user_id).fetch()
+		customers = User.query(User.fb_user_id == user_id).fetch()
+		for customer in customers:
+			customer_name = customer.name
 		beer_list = ""
 
 		for beer in order_beers:
@@ -27,7 +29,7 @@ class AddOrder(webapp2.RequestHandler):
 			beer = '\n{} x{}'.format(beer_name, beer_quantity)
 			beer_list += beer;
 
-		msg_body = 'Beer Order for {}! {}'.format(customer.name, beer_list)		
+		msg_body = 'Beer Order for {}! {}'.format(customer_name, beer_list)		
 
 		bartending_employees = Employee.query(Employee.bartending == True).fetch()
 
