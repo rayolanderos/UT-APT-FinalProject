@@ -20,9 +20,9 @@ import com.hopsquad.hopsquadapp.viewmodels.MainViewModel;
 public class MainActivity extends BaseActivity {
 
     private MainViewModel viewModel;
-    private final String TAP_LIST_FRAGMENT_TAG = "TAP_LIST";
-    private final String USER_HISTORY_FRAGMENT_TAG = "USER_HISTORY";
-    private final String SETTINGS_FRAGMENT_TAG = "SETTINGS";
+    public static final String TAP_LIST_FRAGMENT_TAG = "TAP_LIST";
+    public static final String USER_HISTORY_FRAGMENT_TAG = "USER_HISTORY";
+    public static final String SETTINGS_FRAGMENT_TAG = "SETTINGS";
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener

@@ -7,7 +7,7 @@ from models.beer import Beer
 
 class GetBeer(webapp2.RequestHandler):
 
-    def get(self):
+	def get(self):
 
 		beer_id = int( self.request.get('beerId', 0) )
 

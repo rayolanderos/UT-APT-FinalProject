@@ -1,4 +1,4 @@
-package com.hopsquad.hopsquadapp.api;
+package com.hopsquad.hopsquadapp.models;
 
 import java.util.Date;
 

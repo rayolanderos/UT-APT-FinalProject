@@ -28,6 +28,9 @@
     <string name="account_signout">Sign Out</string>
     <string name="payment_cvv">CVV</string>
     <string name="payment_expiration">Exp</string>
+    <string name="BeerPricePlaceHolder">$00.00</string>
+    <string name="beerImageContentDescription">An image of a beer</string>
+    <string name="ABVPlaceholder">99.9%</string>
 
     <string-array name="beer_order_amount">
         <item>0</item>
@@ -41,5 +44,12 @@
         <item>8</item>
         <item>9</item>
     </string-array>
+    <string name="confirm_order_dialog_button">Place Order</string>
+    <string name="cancel_order_button_dialog">Cancel</string>
+    <string name="order_succesfully_placed_msg">Hey! You just got some beer!</string>
+    <string name="order_confirmation_generic_error">There was an error, please try again later.</string>
+    <string name="confirm_order_dialog_title">Confirm Order</string>
+    <string name="order_history_title">Order History</string>
+    <string name="my_rewards_title">My Rewards</string>
 
 </resources>

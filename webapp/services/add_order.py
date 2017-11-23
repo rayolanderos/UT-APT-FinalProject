@@ -42,7 +42,7 @@ class AddOrder(webapp2.RequestHandler):
 		json_string = self.request.body
 		dict_object = json.loads(json_string)
 
-		order_user_id = int (dict_object['userId'])
+		order_user_id = dict_object['userId']
 		order_order_total = float ( dict_object['total'] )
 		#order_status = dict_object['status']
 		order_reward_id = int( dict_object['rewardId'] )
@@ -55,7 +55,7 @@ class AddOrder(webapp2.RequestHandler):
 		if not same_invoice_number:
 
 			order = Order(
-				user_id = order_user_id, 
+				fb_user_id = order_user_id, 
 			    order_total =  order_order_total, 
 			    #status = order_status, 
 			    reward_id = order_reward_id, 
@@ -75,10 +75,10 @@ class AddOrder(webapp2.RequestHandler):
 				order_beer_id = str(order_beer_key.id())
 
 			self.text_order(order_beers, order_user_id)
-			res = { "msg" : "Order successfully placed", "success": True, "order_id" : order_id }
-			self.response.out.write(json.dumps(res))
+			self.response.set_status(200)
 
 		else:
-			res = { "msg" : "That order already exists in the system or something went wrong. Please try again.", "success": False }
-			self.response.out.write(json.dumps(res))
+			self.response.set_status(500)
+
+		
         
