@@ -14,6 +14,7 @@ class UpdateUser(webapp2.RequestHandler):
 
 		user_id = int( dict_object['userId'] ) 
 		user_name = dict_object['userName']
+		user_fb_user_id = dict_object['userFbUserId']
 		user_email = dict_object['userEmail']
 		user_date_of_birth = dict_object['userDateOfBirth']
 
@@ -22,6 +23,7 @@ class UpdateUser(webapp2.RequestHandler):
 		if user != None:
 			user.name = user_name
 			user.email = user_email
+			user.fb_user_id = user_fb_user_id
 			user.date_of_birth = user_date_of_birth
 
 			user.put()
