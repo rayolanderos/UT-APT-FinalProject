@@ -24,6 +24,8 @@ public class MainActivity extends BaseActivity {
     public static final String USER_HISTORY_FRAGMENT_TAG = "USER_HISTORY";
     public static final String SETTINGS_FRAGMENT_TAG = "SETTINGS";
 
+    private Fragment currentFragment = null;
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -78,6 +80,7 @@ public class MainActivity extends BaseActivity {
     };
 
     private void switchFragment(Fragment fragment, String tag) {
+        currentFragment = fragment;
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content, fragment, tag)
                 .addToBackStack(null)
@@ -112,6 +115,13 @@ public class MainActivity extends BaseActivity {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        currentFragment.onActivityResult(requestCode, resultCode, data);
     }
 
     private void signOut() {

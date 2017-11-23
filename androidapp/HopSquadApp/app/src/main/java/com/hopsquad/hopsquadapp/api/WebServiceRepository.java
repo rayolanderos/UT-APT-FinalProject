@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hopsquad.hopsquadapp.models.Beer;
+import com.hopsquad.hopsquadapp.models.HSUser;
 import com.hopsquad.hopsquadapp.models.Order;
 
 import java.util.List;
@@ -27,6 +28,8 @@ public class WebServiceRepository {
     // TODO: switch to actual project on Google Cloud
     public static final String SIMULATOR_BASE_URL = "http://10.0.2.2:8080/";
     public static final String APP_BASE_URL = "https://hopsquad-app.appspot.com/";
+
+    public static final String STRIPE_PUBLISHABLE_KEY = "pk_test_8J6KmmzwK32kRCoYqGPgBTiZ";
 
     private static Gson gson = new GsonBuilder().setDateFormat("MM/dd/yyyy").create();
 
@@ -69,6 +72,26 @@ public class WebServiceRepository {
 
             @Override
             public void onFailure(Call<Order> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+        return data;
+    }
+
+    public LiveData<HSUser> addUser(HSUser user) {
+
+        final MutableLiveData<HSUser> data = new MutableLiveData<>();
+
+        webservice.addUser(user).enqueue(new Callback<HSUser>() {
+            @Override
+            public void onResponse(Call<HSUser> call, Response<HSUser> response) {
+                HSUser value = response.isSuccessful() ? response.body() : new HSUser();
+                data.setValue(value);
+            }
+
+            @Override
+            public void onFailure(Call<HSUser> call, Throwable t) {
                 t.printStackTrace();
             }
         });

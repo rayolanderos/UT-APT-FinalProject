@@ -29,8 +29,10 @@ public class TapListViewModel extends ViewModel {
     private WebServiceRepository webRepo;
     private HashMap<Beer, Integer> orderInfo;
     private MutableLiveData<Float> liveTotal;
+    private boolean isReadyToPay;
 
     public TapListViewModel() {
+        isReadyToPay = false;
         orderInfo = new HashMap<>();
         liveTotal = new MutableLiveData<>();
         liveTotal.setValue(0.0f);
@@ -144,4 +146,11 @@ public class TapListViewModel extends ViewModel {
         return user.getUid();
     }
 
+    public void setIsReadyToPay(boolean result) {
+        this.isReadyToPay = result;
+    }
+
+    public boolean isReadyToPay() {
+        return isReadyToPay;
+    }
 }

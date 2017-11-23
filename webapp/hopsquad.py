@@ -47,7 +47,6 @@ class MainPage(webapp2.RequestHandler):
             login_url = users.create_login_url('/')
 
             template_values = {
-                'greeting': greeting,
                 'login_url': login_url
             }
 

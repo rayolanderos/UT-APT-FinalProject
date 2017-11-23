@@ -3,9 +3,10 @@ package com.hopsquad.hopsquadapp.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -26,7 +27,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.hopsquad.hopsquadapp.R;
+import com.hopsquad.hopsquadapp.api.WebServiceRepository;
+import com.hopsquad.hopsquadapp.api.Webservice;
+import com.hopsquad.hopsquadapp.models.HSUser;
+import com.hopsquad.hopsquadapp.viewmodels.LoginViewModel;
 
 
 /**
@@ -35,22 +41,27 @@ import com.hopsquad.hopsquadapp.R;
 public class LoginActivity extends BaseActivity {
 
     // UI references.
+    private AutoCompleteTextView mUserNameView;
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
 
+    private LoginViewModel viewModel;
+
     private FirebaseAuth mAuth;
-    private FirebaseUser mUser;
+    private FirebaseUser firebaseUser;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        viewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
+        viewModel.setRepository(new WebServiceRepository());
         mAuth = FirebaseAuth.getInstance();
 
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mUserNameView = (AutoCompleteTextView) findViewById(R.id.name);
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -79,8 +90,8 @@ public class LoginActivity extends BaseActivity {
     @Override
     public void onStart() {
         super.onStart();
-        mUser = mAuth.getCurrentUser();
-        if (mUser != null) {
+        firebaseUser = mAuth.getCurrentUser();
+        if (firebaseUser != null) {
             launchMainActivity();
         }
     }
@@ -104,6 +115,7 @@ public class LoginActivity extends BaseActivity {
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+        String userName = mUserNameView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -135,11 +147,11 @@ public class LoginActivity extends BaseActivity {
             // perform the user login attempt.
             showProgress(true);
 
-            tryLoginOrCreateAccount(email, password);
+            tryLoginOrCreateAccount(userName, email, password);
         }
     }
 
-    private void tryLoginOrCreateAccount(String email, final String password) {
+    private void tryLoginOrCreateAccount(String username, String email, final String password) {
         if (mAuth == null) {
             Log.d("AUTH", "Couldn't find reference to FireBaseAuth");
             return;
@@ -147,6 +159,7 @@ public class LoginActivity extends BaseActivity {
 
         final String loginEmail = email;
         final String loginPassword = password;
+        final String loginUserName = username;
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -172,6 +185,10 @@ public class LoginActivity extends BaseActivity {
                 } else {
                     Log.d("AUTH", "New User Created");
                     FirebaseUser user = mAuth.getCurrentUser();
+                    task.getResult().getUser().updateProfile(
+                            new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(loginUserName).build()).getResult();
+                    viewModel.registerUser(loginUserName, user);
                     user.sendEmailVerification(); // Won't able to buy if doesn't verify email.
                     showProgress(false);
                     launchMainActivity();
@@ -179,8 +196,6 @@ public class LoginActivity extends BaseActivity {
             }
         });
     }
-
-
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic

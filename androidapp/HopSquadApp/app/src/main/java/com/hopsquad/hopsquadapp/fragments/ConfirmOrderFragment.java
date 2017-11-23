@@ -16,12 +16,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.gms.wallet.AutoResolveHelper;
+import com.google.android.gms.wallet.CardRequirements;
+import com.google.android.gms.wallet.PaymentDataRequest;
+import com.google.android.gms.wallet.PaymentMethodTokenizationParameters;
+import com.google.android.gms.wallet.TransactionInfo;
+import com.google.android.gms.wallet.WalletConstants;
 import com.hopsquad.hopsquadapp.R;
 import com.hopsquad.hopsquadapp.activities.MainActivity;
 import com.hopsquad.hopsquadapp.models.Order;
 import com.hopsquad.hopsquadapp.viewmodels.TapListViewModel;
 
 import java.text.NumberFormat;
+import java.util.Arrays;
 
 public class ConfirmOrderFragment extends DialogFragment {
 
@@ -59,27 +66,6 @@ public class ConfirmOrderFragment extends DialogFragment {
         return (TapListFragment) getFragmentManager().findFragmentByTag(MainActivity.TAP_LIST_FRAGMENT_TAG);
     }
 
-    public void confirmOrder() {
-
-        // TODO Add loading spinner
-
-        final LiveData<Order> orderLiveData = viewModel.placeOrder();
-        final TapListFragment tapListFragment = getTapListFragment();
-        orderLiveData.observe(tapListFragment, new Observer<Order>() {
-            @Override
-            public void onChanged(@Nullable Order order) {
-
-                if (order == null || order.invoice == null) {
-                    tapListFragment.showToast(R.string.order_confirmation_generic_error);
-                } else {
-                    tapListFragment.showToast(R.string.order_succesfully_placed_msg);
-                    viewModel.clearOrder();
-                    orderLiveData.removeObservers(tapListFragment);
-                }
-            }
-        });
-    }
-
     private enum UserAction { CANCELED, ACCEPTED };
 
     private static class DialogClickHandler implements DialogInterface.OnClickListener {
@@ -100,7 +86,7 @@ public class ConfirmOrderFragment extends DialogFragment {
             if (wasCanceled()) {
                 dialogInterface.cancel();
             } else {
-                fragment.confirmOrder();
+                fragment.getTapListFragment().confirmOrder();
             }
         }
     }
