@@ -18,7 +18,7 @@ class AddOrder(webapp2.RequestHandler):
 		auth_token = ""
 		client = Client(account_sid, auth_token)
 
-		customer = User.get_by_id(user_id)
+		customer = User.query(User.fb_user_id == user_id).fetch()
 		beer_list = ""
 
 		for beer in order_beers:
@@ -42,7 +42,7 @@ class AddOrder(webapp2.RequestHandler):
 		json_string = self.request.body
 		dict_object = json.loads(json_string)
 
-		order_user_id = dict_object['userId']
+		order_fb_user_id = dict_object['userId']
 		order_order_total = float ( dict_object['total'] )
 		#order_status = dict_object['status']
 		order_reward_id = int( dict_object['rewardId'] )
@@ -55,7 +55,7 @@ class AddOrder(webapp2.RequestHandler):
 		if not same_invoice_number:
 
 			order = Order(
-				fb_user_id = order_user_id, 
+				fb_user_id = order_fb_user_id, 
 			    order_total =  order_order_total, 
 			    #status = order_status, 
 			    reward_id = order_reward_id, 
@@ -74,7 +74,7 @@ class AddOrder(webapp2.RequestHandler):
 				order_beer_key = order_beer.put()
 				order_beer_id = str(order_beer_key.id())
 
-			self.text_order(order_beers, order_user_id)
+			self.text_order(order_beers, order_fb_user_id)
 			self.response.set_status(200)
 
 		else:
