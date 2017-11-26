@@ -31,7 +31,8 @@ public class WebServiceRepository {
 
     public static final String STRIPE_PUBLISHABLE_KEY = "pk_test_8J6KmmzwK32kRCoYqGPgBTiZ";
 
-    private static Gson gson = new GsonBuilder().setDateFormat("MM/dd/yyyy").create();
+    // '%Y-%m-%d %H:%M:%S'
+    private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 
     private static Retrofit.Builder retrofitBuilder = new Retrofit.Builder()
             .baseUrl(APP_BASE_URL)
@@ -40,11 +41,22 @@ public class WebServiceRepository {
     private static Retrofit retrofit = retrofitBuilder.build();
     private static Webservice webservice = retrofit.create(Webservice.class);
 
+    // We have 2 different types of date formats, so we create 2 services.
+    private static Gson gson2 = new GsonBuilder().setDateFormat("MM/dd/yyyy").create();
+
+    private static Retrofit.Builder retrofitBuilder2 = new Retrofit.Builder()
+            .baseUrl(APP_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(gson2));
+
+    private static Retrofit retrofit2 = retrofitBuilder2.build();
+    private static Webservice webservice2 = retrofit2.create(Webservice.class);
+
+
 
     public LiveData<List<Beer>> getAllBeers() {
         final MutableLiveData<List<Beer>>  data = new MutableLiveData<>();
 
-        webservice.getTapList().enqueue(new Callback<List<Beer>>() {
+        webservice2.getTapList().enqueue(new Callback<List<Beer>>() {
             @Override
             public void onResponse(Call<List<Beer>> call, Response<List<Beer>> response) {
                 data.setValue(response.body());
@@ -66,7 +78,7 @@ public class WebServiceRepository {
         webservice.addOrder(order).enqueue(new Callback<Order>() {
             @Override
             public void onResponse(Call<Order> call, Response<Order> response) {
-                Order value = response.isSuccessful() ? response.body() : new Order();
+                Order value = response.isSuccessful() ? order : new Order();
                 data.setValue(value);
             }
 

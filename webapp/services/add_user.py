@@ -29,17 +29,16 @@ class AddUser(webapp2.RequestHandler):
 				name = user_name, 
 				payment_key = user_payment_key,
 				email = user_email,
+				#date_of_birth = datetime.strptime(user_date_of_birth, '%m/%d/%Y')
 				date_of_birth = datetime.strptime(user_date_of_birth, '%Y-%m-%d %H:%M:%S')
 			)
 			user_key = user.put()
 			user_id = str(user_key.id())
 
-			res = { "msg" : "User successfully added", "success": True, "user_id" : user_id }
-			self.response.out.write(json.dumps(res))
+			self.response.set_status(200)
 
 		else:
-			res = { "msg" : "That user already exists in the system or something went wrong. Please try again.", "success": False }
-			self.response.out.write(json.dumps(res))
+			self.response.set_status(500)
 
 		
         

@@ -17,7 +17,7 @@ public class HSUser {
     public String fireBaseUserId;
 
     @SerializedName("userPaymentKey")
-    public int paymentKey;
+    public String paymentKey;
 
     @SerializedName("userEmail")
     public String email;

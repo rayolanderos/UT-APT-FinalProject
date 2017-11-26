@@ -81,7 +81,7 @@ public class TapListFragment extends BaseFragment {
                         // This is the raw JSON string version of your Stripe token.
                         String rawToken = paymentData.getPaymentMethodToken().getToken();
 
-                        registerPlacedOrder();
+                        registerPlacedOrder(rawToken);
 
                         break;
                     case Activity.RESULT_CANCELED:
@@ -186,17 +186,12 @@ public class TapListFragment extends BaseFragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         final Context context = this.getContext();
 
-        viewModel.getTapList().observe(this.getActivity(), new Observer<List<Beer>>() {
-
-            @Override
-            public void onChanged(@Nullable List<Beer> beers) {
+        viewModel.getTapList().observe(this.getActivity(),(beers) -> {
                 mAdapter = new BeerAdapter(viewModel, context);
                 mAdapter.isRefreshing = true;
                 mRecyclerView.setAdapter(mAdapter);
                 mAdapter.isRefreshing = false;
-
-            }
-        });
+            });
     }
 
     public void confirmOrder() {
@@ -208,8 +203,8 @@ public class TapListFragment extends BaseFragment {
         }
     }
 
-    private void registerPlacedOrder() {
-        final LiveData<Order> orderLiveData = viewModel.placeOrder();
+    private void registerPlacedOrder(String token) {
+        final LiveData<Order> orderLiveData = viewModel.placeOrder(token);
         final TapListFragment tapListFragment = this;
         orderLiveData.observe(tapListFragment, new Observer<Order>() {
             @Override

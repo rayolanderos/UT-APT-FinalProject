@@ -7,10 +7,15 @@ import android.arch.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.hopsquad.hopsquadapp.models.Beer;
 import com.hopsquad.hopsquadapp.api.WebServiceRepository;
 import com.hopsquad.hopsquadapp.models.BeerAndQuantity;
 import com.hopsquad.hopsquadapp.models.Order;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,8 +90,8 @@ public class TapListViewModel extends ViewModel {
         liveTotal.setValue(0.0f);
     }
 
-    public LiveData<Order> placeOrder() {
-        Order order = buildOrder();
+    public LiveData<Order> placeOrder(String token) {
+        Order order = buildOrder(token);
         return webRepo.placeOrder(order);
     }
 
@@ -98,18 +103,28 @@ public class TapListViewModel extends ViewModel {
         return liveTotal.getValue();
     }
 
-    private Order buildOrder() {
+    private Order buildOrder(String token) {
         Order order = new Order();
 
         order.discount = 0;
 
-        order.invoice = generatePseudoInvoice();
+        try {
+            order.invoice = parseTokenInvoiceId(token);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         order.rewardId = 0;
         order.userId = getUserId();
         order.beers = getBeersByQuantity();
-        // TODO: Add the rest of properties
+        order.total = getOrderTotal();
 
         return order;
+    }
+
+    private String parseTokenInvoiceId(String token) throws JSONException {
+        JSONObject jsonObject = new JSONObject(token);
+        String token_id = jsonObject.getString("id");
+        return token_id;
     }
 
     private String generatePseudoInvoice() {
