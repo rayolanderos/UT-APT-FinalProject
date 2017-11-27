@@ -36,6 +36,8 @@ public class TapListViewModel extends ViewModel {
     private MutableLiveData<Float> liveTotal;
     private boolean isReadyToPay;
 
+    public static final float STATE_TAX = 8.25f;
+
     public TapListViewModel() {
         isReadyToPay = false;
         orderInfo = new HashMap<>();
@@ -69,7 +71,7 @@ public class TapListViewModel extends ViewModel {
         Beer beer = getBeerById(beerId);
         Integer currentQty = orderInfo.get(beer);
         currentQty = currentQty == null ? new Integer(0) : currentQty;
-        currentTotal += (quantity - currentQty.intValue()) * beer.price;
+        currentTotal += (quantity - currentQty.intValue()) * (beer.price * (1 + STATE_TAX / 100)) ;
 
         liveTotal.setValue(currentTotal);
         orderInfo.put(beer, quantity);

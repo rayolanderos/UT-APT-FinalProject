@@ -98,7 +98,7 @@ public class LoginActivity extends BaseActivity {
         viewModel.getLiveUserDateOfBirth().observe(this, new Observer<Date>() {
             @Override
             public void onChanged(@Nullable Date date) {
-                SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
+                SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
                 mDateOfBirthView.setText(formatter.format(date));
             }
         });

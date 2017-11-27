@@ -52,5 +52,6 @@
     <string name="order_history_title">Order History</string>
     <string name="my_rewards_title">My Rewards</string>
     <string name="prompt_name">Name</string>
+    <string name="dateOfBirthPlaceHolder">Date of Birth</string>
 
 </resources>

@@ -30,11 +30,15 @@ public class DatePickerFragment extends BaseDialogFragment{
         final Calendar c = Calendar.getInstance();
         LoginActivity activity = (LoginActivity) getActivity();
         viewModel = ViewModelProviders.of(activity).get(LoginViewModel.class);
-        int year = c.get(Calendar.YEAR) - LEGAL_DRINKING_AGE;
+        c.set(Calendar.YEAR, c.get(Calendar.YEAR) - LEGAL_DRINKING_AGE);
+        int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
 
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), viewModel, year, month, day);
+        datePickerDialog.getDatePicker().setMaxDate(c.getTimeInMillis());
+
         // Create a new instance of DatePickerDialog and return it
-        return new DatePickerDialog(getActivity(), viewModel, year, month, day);
+        return datePickerDialog;
     }
 }
