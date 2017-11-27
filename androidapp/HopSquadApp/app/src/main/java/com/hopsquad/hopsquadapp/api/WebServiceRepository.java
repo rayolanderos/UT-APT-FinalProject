@@ -2,17 +2,17 @@ package com.hopsquad.hopsquadapp.api;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hopsquad.hopsquadapp.models.Beer;
 import com.hopsquad.hopsquadapp.models.HSUser;
+import com.hopsquad.hopsquadapp.models.HistoryOrder;
 import com.hopsquad.hopsquadapp.models.Order;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -36,27 +36,14 @@ public class WebServiceRepository {
 
     public static final String STRIPE_PUBLISHABLE_KEY = "pk_test_8J6KmmzwK32kRCoYqGPgBTiZ";
 
-    // '%Y-%m-%d %H:%M:%S'
-    private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
-
-    private static Retrofit.Builder retrofitBuilder = new Retrofit.Builder()
-            .baseUrl(APP_BASE_URL)
-            .addConverterFactory(new NullOnEmptyConverterFactory())
-            .addConverterFactory(GsonConverterFactory.create(gson));
-
-    private static Retrofit retrofit = retrofitBuilder.build();
-    private static Webservice webservice = retrofit.create(Webservice.class);
+    private static Webservice webservice = initializeWebService("yyyy-MM-dd HH:mm:ss");
 
     // We have 2 different types of date formats, so we create 2 services.
-    private static Gson gson2 = new GsonBuilder().setDateFormat("MM/dd/yyyy").create();
+    private static Webservice getAllBeersWebService = initializeWebService("MM/dd/yyyy");
 
-    private static Retrofit.Builder retrofitBuilder2 = new Retrofit.Builder()
-            .baseUrl(APP_BASE_URL)
-            .addConverterFactory(new NullOnEmptyConverterFactory())
-            .addConverterFactory(GsonConverterFactory.create(gson2));
-
-    private static Retrofit retrofit2 = retrofitBuilder2.build();
-    private static Webservice webservice2 = retrofit2.create(Webservice.class);
+    // '%m/%d/%Y %H:%M:%S'
+    // We actually have 3 different types of date formats, so we create 3 services
+    private static Webservice getAllOrdersWebService = initializeWebService("MM/dd/yyyy HH:mm:ss");
 
     // Added for entrypoints that return empty content to convert it to null
     static class NullOnEmptyConverterFactory extends Converter.Factory {
@@ -75,12 +62,23 @@ public class WebServiceRepository {
         }
     }
 
+    private static Webservice initializeWebService(String dateFormat) {
+        Gson gson = new GsonBuilder().setDateFormat(dateFormat).create();
+        Retrofit.Builder retrofitBuilder = new Retrofit.Builder()
+                .baseUrl(APP_BASE_URL)
+                .addConverterFactory(new NullOnEmptyConverterFactory())
+                .addConverterFactory(GsonConverterFactory.create(gson));
 
+        Retrofit retrofit = retrofitBuilder.build();
+        Webservice webservice = retrofit.create(Webservice.class);
+
+        return webservice;
+    }
 
     public LiveData<List<Beer>> getAllBeers() {
         final MutableLiveData<List<Beer>>  data = new MutableLiveData<>();
 
-        webservice2.getTapList().enqueue(new Callback<List<Beer>>() {
+        getAllBeersWebService.getTapList().enqueue(new Callback<List<Beer>>() {
             @Override
             public void onResponse(Call<List<Beer>> call, Response<List<Beer>> response) {
                 data.setValue(response.body());
@@ -88,6 +86,36 @@ public class WebServiceRepository {
 
             @Override
             public void onFailure(Call<List<Beer>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+        return data;
+    }
+
+    public LiveData<List<HistoryOrder>> getAllOrders(String userId) {
+        final MutableLiveData<List<HistoryOrder>> data = new MutableLiveData<>();
+
+        getAllOrdersWebService.getAllOrders().enqueue(new Callback<List<HistoryOrder>>() {
+            @Override
+            public void onResponse(Call<List<HistoryOrder>> call, Response<List<HistoryOrder>> response) {
+                List<HistoryOrder> value = response.isSuccessful() ? response.body() : new ArrayList<HistoryOrder>();
+
+                ArrayList<HistoryOrder> filteredValue = new ArrayList<>();
+                for (HistoryOrder order : value) {
+//                    if (userId != null && userId.equals(order.userId)) {
+                        filteredValue.add(order);
+                        if (filteredValue.size() == 3) {
+                            break;
+                        }
+//                    }
+                }
+
+                data.setValue(filteredValue);
+            }
+
+            @Override
+            public void onFailure(Call<List<HistoryOrder>> call, Throwable t) {
                 t.printStackTrace();
             }
         });

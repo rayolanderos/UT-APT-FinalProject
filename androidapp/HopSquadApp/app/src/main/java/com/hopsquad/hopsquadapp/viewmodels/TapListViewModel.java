@@ -7,8 +7,6 @@ import android.arch.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.hopsquad.hopsquadapp.models.Beer;
 import com.hopsquad.hopsquadapp.api.WebServiceRepository;
 import com.hopsquad.hopsquadapp.models.BeerAndQuantity;
@@ -22,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Predicate;
 
 /**
  * Created by memo on 15/11/17.
