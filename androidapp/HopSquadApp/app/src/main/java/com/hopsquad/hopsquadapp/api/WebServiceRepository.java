@@ -10,10 +10,15 @@ import com.hopsquad.hopsquadapp.models.Beer;
 import com.hopsquad.hopsquadapp.models.HSUser;
 import com.hopsquad.hopsquadapp.models.Order;
 
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -36,6 +41,7 @@ public class WebServiceRepository {
 
     private static Retrofit.Builder retrofitBuilder = new Retrofit.Builder()
             .baseUrl(APP_BASE_URL)
+            .addConverterFactory(new NullOnEmptyConverterFactory())
             .addConverterFactory(GsonConverterFactory.create(gson));
 
     private static Retrofit retrofit = retrofitBuilder.build();
@@ -46,10 +52,28 @@ public class WebServiceRepository {
 
     private static Retrofit.Builder retrofitBuilder2 = new Retrofit.Builder()
             .baseUrl(APP_BASE_URL)
+            .addConverterFactory(new NullOnEmptyConverterFactory())
             .addConverterFactory(GsonConverterFactory.create(gson2));
 
     private static Retrofit retrofit2 = retrofitBuilder2.build();
     private static Webservice webservice2 = retrofit2.create(Webservice.class);
+
+    // Added for entrypoints that return empty content to convert it to null
+    static class NullOnEmptyConverterFactory extends Converter.Factory {
+
+        @Override
+        public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
+            super.responseBodyConverter(type, annotations, retrofit);
+            final Converter<ResponseBody, ?> delegate = retrofit.nextResponseBodyConverter(this, type, annotations);
+
+            return (Converter<ResponseBody, Object>) value -> {
+                if (value.contentLength() == 0) {
+                    return null;
+                }
+                return delegate.convert(value);
+            };
+        }
+    }
 
 
 

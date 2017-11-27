@@ -184,13 +184,9 @@ public class TapListFragment extends BaseFragment {
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this.getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        final Context context = this.getContext();
 
         viewModel.getTapList().observe(this.getActivity(),(beers) -> {
-                mAdapter = new BeerAdapter(viewModel, context);
-                mAdapter.isRefreshing = true;
-                mRecyclerView.setAdapter(mAdapter);
-                mAdapter.isRefreshing = false;
+                refreshBeerList();
             });
     }
 
@@ -215,10 +211,18 @@ public class TapListFragment extends BaseFragment {
                 } else {
                     tapListFragment.showToast(R.string.order_succesfully_placed_msg);
                     viewModel.clearOrder();
+                    refreshBeerList();
                     orderLiveData.removeObservers(tapListFragment);
                 }
             }
         });
+    }
+
+    private void refreshBeerList() {
+        mAdapter = new BeerAdapter(viewModel, this.getContext());
+        mAdapter.isRefreshing = true;
+        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.isRefreshing = false;
     }
 
     private PaymentDataRequest createPaymentDataRequest() {
