@@ -23,6 +23,9 @@ import com.google.android.gms.wallet.Wallet;
 import com.google.android.gms.wallet.WalletConstants;
 import com.hopsquad.hopsquadapp.api.WebServiceRepository;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Arrays;
 
 /**
@@ -99,7 +102,18 @@ public class PayWithGoogleService {
     }
 
     public String getResultToken() {
-        return mResultToken;
+        try {
+            return parseTokenInvoiceId(mResultToken);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private String parseTokenInvoiceId(String token) throws JSONException {
+        JSONObject jsonObject = new JSONObject(token);
+        String token_id = jsonObject.getString("id");
+        return token_id;
     }
 
     private PaymentDataRequest createPaymentDataRequest(float total) {
