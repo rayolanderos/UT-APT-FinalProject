@@ -13,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.JsonReader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +37,6 @@ import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.Wallet;
 import com.google.android.gms.wallet.WalletConstants;
-import com.google.gson.JsonObject;
 import com.hopsquad.hopsquadapp.R;
 import com.hopsquad.hopsquadapp.models.Beer;
 import com.hopsquad.hopsquadapp.api.WebServiceRepository;
@@ -48,7 +46,6 @@ import com.squareup.picasso.Picasso;
 
 import java.text.NumberFormat;
 import java.util.Arrays;
-import java.util.List;
 
 public class TapListFragment extends BaseFragment {
 

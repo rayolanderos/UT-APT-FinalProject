@@ -22,6 +22,7 @@ from services import get_all_employees
 from services import add_order
 from services import get_order
 from services import get_all_orders
+from services import get_all_orders_by_user
 from services import add_user
 from services import update_user
 from services import get_user
@@ -73,6 +74,7 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/api/add_order', add_order.AddOrder, name='add-order'),
     webapp2.Route('/api/get_order', get_order.GetOrder, name='get-order'),
     webapp2.Route('/api/get_all_orders', get_all_orders.GetAllOrders, name='get-all-orders'),
+    webapp2.Route('/api/get_all_orders_by_user', get_all_orders_by_user.GetAllOrdersByUser, name='get-all-orders-by-user'),
     webapp2.Route('/api/add_user', add_user.AddUser, name='add-user'),
     webapp2.Route('/api/update_user', update_user.UpdateUser, name='update-user'),
     webapp2.Route('/api/get_user', get_user.GetUser, name='get-user')
