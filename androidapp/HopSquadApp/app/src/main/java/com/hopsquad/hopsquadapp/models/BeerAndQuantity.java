@@ -1,5 +1,7 @@
 package com.hopsquad.hopsquadapp.models;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by memo on 21/11/17.
  * Used to serialize an order description into JSON.
@@ -7,7 +9,10 @@ package com.hopsquad.hopsquadapp.models;
 
 public class BeerAndQuantity {
     private String id;
-    private int quantity;
+    public int quantity;
+
+    @SerializedName("beer_name")
+    public String beerName;
 
     public BeerAndQuantity(String beerId, int quantity) {
         id = beerId;

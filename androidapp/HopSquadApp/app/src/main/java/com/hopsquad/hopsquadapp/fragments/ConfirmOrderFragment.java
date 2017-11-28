@@ -2,16 +2,10 @@ package com.hopsquad.hopsquadapp.fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -59,27 +53,6 @@ public class ConfirmOrderFragment extends DialogFragment {
         return (TapListFragment) getFragmentManager().findFragmentByTag(MainActivity.TAP_LIST_FRAGMENT_TAG);
     }
 
-    public void confirmOrder() {
-
-        // TODO Add loading spinner
-
-        final LiveData<Order> orderLiveData = viewModel.placeOrder();
-        final TapListFragment tapListFragment = getTapListFragment();
-        orderLiveData.observe(tapListFragment, new Observer<Order>() {
-            @Override
-            public void onChanged(@Nullable Order order) {
-
-                if (order == null || order.invoice == null) {
-                    tapListFragment.showToast(R.string.order_confirmation_generic_error);
-                } else {
-                    tapListFragment.showToast(R.string.order_succesfully_placed_msg);
-                    viewModel.clearOrder();
-                    orderLiveData.removeObservers(tapListFragment);
-                }
-            }
-        });
-    }
-
     private enum UserAction { CANCELED, ACCEPTED };
 
     private static class DialogClickHandler implements DialogInterface.OnClickListener {
@@ -100,7 +73,7 @@ public class ConfirmOrderFragment extends DialogFragment {
             if (wasCanceled()) {
                 dialogInterface.cancel();
             } else {
-                fragment.confirmOrder();
+                fragment.getTapListFragment().confirmOrder();
             }
         }
     }

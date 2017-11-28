@@ -1,6 +1,8 @@
 package com.hopsquad.hopsquadapp.api;
 
 import com.hopsquad.hopsquadapp.models.Beer;
+import com.hopsquad.hopsquadapp.models.HSUser;
+import com.hopsquad.hopsquadapp.models.HistoryOrder;
 import com.hopsquad.hopsquadapp.models.Order;
 
 import java.util.List;
@@ -24,6 +26,15 @@ public interface Webservice {
     @GET("/api/get_beer")
     Call<Beer> getBeer(@Body int beerId);
 
+    @GET("/api/get_all_orders")
+    Call<List<HistoryOrder>> getAllOrders();
+
+    @GET("/api/get_all_orders_by_user")
+    Call<List<HistoryOrder>> getAllOrdersByUserId(String userId);
+
     @POST("/api/add_order")
     Call<Order> addOrder(@Body Order order);
+
+    @POST("/api/add_user")
+    Call<HSUser> addUser(@Body HSUser user);
 }

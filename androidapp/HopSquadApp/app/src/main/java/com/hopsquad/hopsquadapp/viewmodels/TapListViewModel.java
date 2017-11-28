@@ -12,12 +12,14 @@ import com.hopsquad.hopsquadapp.api.WebServiceRepository;
 import com.hopsquad.hopsquadapp.models.BeerAndQuantity;
 import com.hopsquad.hopsquadapp.models.Order;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Predicate;
 
 /**
  * Created by memo on 15/11/17.
@@ -29,8 +31,12 @@ public class TapListViewModel extends ViewModel {
     private WebServiceRepository webRepo;
     private HashMap<Beer, Integer> orderInfo;
     private MutableLiveData<Float> liveTotal;
+    private boolean isReadyToPay;
+
+    public static final float STATE_TAX = 8.25f;
 
     public TapListViewModel() {
+        isReadyToPay = false;
         orderInfo = new HashMap<>();
         liveTotal = new MutableLiveData<>();
         liveTotal.setValue(0.0f);
@@ -62,7 +68,7 @@ public class TapListViewModel extends ViewModel {
         Beer beer = getBeerById(beerId);
         Integer currentQty = orderInfo.get(beer);
         currentQty = currentQty == null ? new Integer(0) : currentQty;
-        currentTotal += (quantity - currentQty.intValue()) * beer.price;
+        currentTotal += (quantity - currentQty.intValue()) * (beer.price * (1 + STATE_TAX / 100)) ;
 
         liveTotal.setValue(currentTotal);
         orderInfo.put(beer, quantity);
@@ -83,8 +89,8 @@ public class TapListViewModel extends ViewModel {
         liveTotal.setValue(0.0f);
     }
 
-    public LiveData<Order> placeOrder() {
-        Order order = buildOrder();
+    public LiveData<Order> placeOrder(String token) {
+        Order order = buildOrder(token);
         return webRepo.placeOrder(order);
     }
 
@@ -96,18 +102,28 @@ public class TapListViewModel extends ViewModel {
         return liveTotal.getValue();
     }
 
-    private Order buildOrder() {
+    private Order buildOrder(String token) {
         Order order = new Order();
 
         order.discount = 0;
 
-        order.invoice = generatePseudoInvoice();
+        try {
+            order.invoice = parseTokenInvoiceId(token);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         order.rewardId = 0;
         order.userId = getUserId();
         order.beers = getBeersByQuantity();
-        // TODO: Add the rest of properties
+        order.total = getOrderTotal();
 
         return order;
+    }
+
+    private String parseTokenInvoiceId(String token) throws JSONException {
+        JSONObject jsonObject = new JSONObject(token);
+        String token_id = jsonObject.getString("id");
+        return token_id;
     }
 
     private String generatePseudoInvoice() {
@@ -144,4 +160,11 @@ public class TapListViewModel extends ViewModel {
         return user.getUid();
     }
 
+    public void setIsReadyToPay(boolean result) {
+        this.isReadyToPay = result;
+    }
+
+    public boolean isReadyToPay() {
+        return isReadyToPay;
+    }
 }
