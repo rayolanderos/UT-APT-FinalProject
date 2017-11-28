@@ -14,8 +14,8 @@ from twilio.rest import Client
 class AddOrder(webapp2.RequestHandler):
 
 	def text_order(self, order_beers, user_id):
-		account_sid = ""
-		auth_token = ""
+		account_sid = "AC83ecb8234d9b8f68b36834c8d5bbcba1"
+		auth_token = "ae48a9209d18e3ea1affe7ce2cfb0167"
 		client = Client(account_sid, auth_token)
 
 		customers = User.query(User.fb_user_id == user_id).fetch()

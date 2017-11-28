@@ -56,6 +56,24 @@ public class WebServiceRepository {
         return data;
     }
 
+    public LiveData<Beer> getSingleBeer(int beerId) {
+        final MutableLiveData<Beer>  data = new MutableLiveData<>();
+
+        webservice.getBeer(beerId).enqueue(new Callback<Beer>() {
+            @Override
+            public void onResponse(Call<Beer> call, Response<Beer> response) {
+                data.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Beer> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+        return data;
+    }
+
     public LiveData<Order> placeOrder(Order order) {
 
         final MutableLiveData<Order> data = new MutableLiveData<>();
