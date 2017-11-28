@@ -17,6 +17,7 @@ class AddUser(webapp2.RequestHandler):
 
 		user_name = dict_object['userName']
 		user_payment_key = dict_object['userPaymentKey']
+		user_fb_user_id = dict_object['userFbUserId']
 		user_email = dict_object['userEmail']
 		user_date_of_birth = dict_object['userDateOfBirth']
 
@@ -28,6 +29,7 @@ class AddUser(webapp2.RequestHandler):
 			user = User(
 				name = user_name, 
 				payment_key = user_payment_key,
+				fb_user_id = user_fb_user_id,
 				email = user_email,
 				#date_of_birth = datetime.strptime(user_date_of_birth, '%m/%d/%Y')
 				date_of_birth = datetime.strptime(user_date_of_birth, '%Y-%m-%d %H:%M:%S')
