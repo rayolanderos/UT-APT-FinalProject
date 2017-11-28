@@ -137,6 +137,7 @@ public class TapListFragment extends BaseFragment {
         public void onBindViewHolder(BeerHolder holder, int position) {
             final Beer b = tapList.getTapList().getValue().get(position);
             holder.mTitleView.setText(b.name);
+            holder.mStyleView.setText(b.style);
             holder.mAlcoholByVolumeView.setText(String.format("%2.1f%%", b.abv));
             holder.mPriceView.setText(NumberFormat.getCurrencyInstance().format(b.price));
 
@@ -169,6 +170,7 @@ public class TapListFragment extends BaseFragment {
     private static class BeerHolder extends RecyclerView.ViewHolder {
         public ImageView mImageView;
         public TextView mTitleView;
+        public TextView mStyleView;
         public Spinner mSpinnerView;
         public TextView mAlcoholByVolumeView;
         public TextView mPriceView;
@@ -177,6 +179,7 @@ public class TapListFragment extends BaseFragment {
             super(view);
             mImageView = view.findViewById(R.id.beerImage);
             mTitleView = view.findViewById(R.id.beerNameView);
+            mStyleView = view.findViewById(R.id.beerStyleText);
             mSpinnerView = view.findViewById(R.id.beerSpinner);
             mAlcoholByVolumeView = view.findViewById(R.id.alcoholByVolumeText);
             mPriceView = view.findViewById(R.id.beerPriceText);
