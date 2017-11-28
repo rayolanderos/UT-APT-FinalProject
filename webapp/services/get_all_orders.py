@@ -36,7 +36,7 @@ class GetAllOrders(webapp2.RequestHandler):
 					beer_name = "Unknown beer id " + beer_id
 				
 				order_beer_list.append({
-					'beer_id' : order_beer.beer_id,
+					'id' : order_beer.beer_id,
 					'beer_name' : beer_name,
 					'quantity' : order_beer.quantity
 				})
