@@ -1,6 +1,7 @@
 package com.hopsquad.hopsquadapp.api;
 
 import com.hopsquad.hopsquadapp.models.Beer;
+import com.hopsquad.hopsquadapp.models.HSUser;
 import com.hopsquad.hopsquadapp.models.Order;
 
 import java.util.List;
@@ -23,4 +24,7 @@ public interface Webservice {
 
     @POST("/api/add_order")
     Call<Order> addOrder(@Body Order order);
+
+    @POST("/api/add_user")
+    Call<HSUser> addUser(@Body HSUser user);
 }
