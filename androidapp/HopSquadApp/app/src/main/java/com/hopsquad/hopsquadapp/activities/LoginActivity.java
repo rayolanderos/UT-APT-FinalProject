@@ -3,7 +3,6 @@ package com.hopsquad.hopsquadapp.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.DialogFragment;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -89,8 +88,8 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onFocusChange(View view, boolean gotFocus) {
                 if (gotFocus) {
-                    DialogFragment newFragment = new DatePickerFragment();
-                    newFragment.show(getFragmentManager(), "datePicker");
+                    DatePickerFragment newFragment = new DatePickerFragment();
+                    newFragment.show(getSupportFragmentManager(), "datePicker");
                 }
             }
         });

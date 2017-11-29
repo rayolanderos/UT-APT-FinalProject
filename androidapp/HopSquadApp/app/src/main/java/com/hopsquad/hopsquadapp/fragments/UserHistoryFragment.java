@@ -1,6 +1,8 @@
 package com.hopsquad.hopsquadapp.fragments;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 
 import com.hopsquad.hopsquadapp.R;
 import com.hopsquad.hopsquadapp.api.WebServiceRepository;
+import com.hopsquad.hopsquadapp.framework.PayWithGoogleService;
 import com.hopsquad.hopsquadapp.models.BeerAndQuantity;
 import com.hopsquad.hopsquadapp.models.HistoryOrder;
 import com.hopsquad.hopsquadapp.models.Order;
@@ -22,7 +25,7 @@ import org.w3c.dom.Text;
 import java.util.Calendar;
 import java.util.List;
 
-public class UserHistoryFragment extends BaseFragment {
+public class UserHistoryFragment extends BaseFragment implements ConfirmOrderFragment.OnConfirmDialogOptionSelectedListener {
 
     private RecyclerView mOrderHistoryView;
 
@@ -38,6 +41,7 @@ public class UserHistoryFragment extends BaseFragment {
     private OrderHistoryViewModel viewModel;
     private OrderHistoryAdapter mOrderAdapter;
     private LinearLayoutManager mLayoutManager;
+    private PayWithGoogleService payService;
 
     public UserHistoryFragment() {
         // Required empty public constructor
@@ -72,6 +76,8 @@ public class UserHistoryFragment extends BaseFragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        payService = new PayWithGoogleService(this.getContext());
     }
 
     @Override
@@ -85,7 +91,7 @@ public class UserHistoryFragment extends BaseFragment {
         mOrderHistoryView.setLayoutManager(mLayoutManager);
 
         viewModel.getOrderHistory().observe(this, (orders) -> {
-            mOrderAdapter = new OrderHistoryAdapter(orders);
+            mOrderAdapter = new OrderHistoryAdapter(this, orders);
             mOrderHistoryView.setAdapter(mOrderAdapter);
             mOrderAdapter.notifyDataSetChanged();
         });
@@ -94,12 +100,52 @@ public class UserHistoryFragment extends BaseFragment {
         return inflatedView;
     }
 
+    @Override
+    public void onConfirmDialogOptionSelected(boolean confirmed) {
+        if (confirmed) {
+            payService.confirmOrder(getActivity(), viewModel.getSelectedOrder().getValue().order_total);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        String token = null;
+
+        if (payService.canHandleRequestCode(requestCode)) {
+            payService.handleActivityResult(resultCode, data);
+            token = payService.getResultToken();
+        }
+
+        if (token != null) {
+            registerPlacedOrder(token);
+        }
+
+    }
+
+    private void registerPlacedOrder(String token) {
+        final LiveData<Order> orderLiveData = viewModel.placeOrder(token);
+        orderLiveData.observe(this, order -> {
+            if (order == null || order.invoice == null) {
+                this.showToast(R.string.order_confirmation_generic_error);
+            } else {
+                this.showToast(R.string.order_succesfully_placed_msg);
+                viewModel.setHistoryOrderSelected(null);
+                // Todo Refresh orders list
+                orderLiveData.removeObservers(this);
+            }
+        });
+    }
+
     private static class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryHolder> {
 
         private List<HistoryOrder> orderHistory;
+        private UserHistoryFragment fragment;
 
-        public OrderHistoryAdapter(List<HistoryOrder> orderHistory) {
+        public OrderHistoryAdapter(UserHistoryFragment fragment, List<HistoryOrder> orderHistory) {
             this.orderHistory = orderHistory;
+            this.fragment = fragment;
         }
 
         @Override
@@ -114,12 +160,7 @@ public class UserHistoryFragment extends BaseFragment {
         public void onBindViewHolder(OrderHistoryHolder holder, int position) {
             HistoryOrder order = orderHistory.get(position);
 
-            holder.mOrderAgainButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                }
-            });
+            holder.mOrderAgainButton.setOnClickListener(view -> fragment.orderAgain(order));
 
             StringBuilder orderDetails = new StringBuilder();
             for (BeerAndQuantity beerAndQuantity : order.details) {
@@ -134,6 +175,14 @@ public class UserHistoryFragment extends BaseFragment {
         public int getItemCount() {
             return orderHistory.size();
         }
+    }
+
+    private void orderAgain(HistoryOrder order) {
+        viewModel.setHistoryOrderSelected(order);
+        Order newOrder = viewModel.convertHistoryOrderToOrder(order);
+        ConfirmOrderFragment confirmDialog = ConfirmOrderFragment.newInstance(newOrder.total);
+        confirmDialog.setOnConfirmDialogOptionSelectedListener(this);
+        confirmDialog.show(this.getFragmentManager(), "CONFIRM_ORDER");
     }
 
     // Totally inspired from: https://stackoverflow.com/questions/42508736/how-to-change-string-time-stamp-into-human-readable-date-format#42509214

@@ -22,6 +22,7 @@ class GetAllOrdersByUser(webapp2.RequestHandler):
 
 		for order in orders:
 			date = order.timestamp
+			# Please we need to use only 1 format!
 			date_string = date.strftime('%m/%d/%Y %H:%M:%S')
 
 			order_beer_query = OrderBeer.query( OrderBeer.order_id == order.key.id() ).order(-OrderBeer.quantity)
@@ -38,7 +39,7 @@ class GetAllOrdersByUser(webapp2.RequestHandler):
 					beer_name = "Unknown beer id " + beer_id
 				
 				order_beer_list.append({
-					'beer_id' : order_beer.beer_id,
+					'id' : order_beer.beer_id,
 					'beer_name' : beer_name,
 					'quantity' : order_beer.quantity
 				})
