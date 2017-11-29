@@ -12,6 +12,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.hopsquad.hopsquadapp.R;
 import com.hopsquad.hopsquadapp.models.Beer;
@@ -19,6 +22,7 @@ import com.hopsquad.hopsquadapp.viewmodels.BeerViewModel;
 import com.hopsquad.hopsquadapp.viewmodels.TapListViewModel;
 import com.squareup.picasso.Picasso;
 
+import java.text.NumberFormat;
 import java.util.List;
 
 /**
@@ -31,19 +35,30 @@ import java.util.List;
  */
 public class BeerFragment extends BaseFragment {
 
-    private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private ScrollView mScrollView;
     private BeerViewModel viewModel;
-    private int beerId;
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_BEER_NAME = "beer_name";
+    private static final String ARG_BEER_STYLE = "beer_style";
+    private static final String ARG_BEER_DESCRIPTION = "beer_description";
+    private static final String ARG_BEER_ABV = "beer_abv";
+    private static final String ARG_BEER_IBUS = "beer_ibus";
+    private static final String ARG_BEER_SRM = "beer_srm";
+    private static final String ARG_BEER_PRICE = "beer_price";
+    private static final String ARG_BEER_REVIEW = "beer_review";
+    private static final String ARG_BEER_DESCRIPTION_IMAGE = "description_image";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+
+    public String name;
+    public String style;
+    public String description;
+    public String description_image;
+    public double price;
+    public double abv;
+    public int ibus;
+    public int srm;
+    public double review;
 
     private OnFragmentInteractionListener mListener;
 
@@ -55,16 +70,29 @@ public class BeerFragment extends BaseFragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment BeerFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static BeerFragment newInstance(String param1, String param2) {
+    public static BeerFragment newInstance(String beer_name,
+                                           String beer_style,
+                                           String beer_description,
+                                           String beer_description_image,
+                                           double beer_price,
+                                           double beer_abv,
+                                           int beer_ibus,
+                                           int beer_srm,
+                                           double beer_review) {
         BeerFragment fragment = new BeerFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_BEER_NAME, beer_name);
+        args.putString(ARG_BEER_STYLE, beer_style);
+        args.putString(ARG_BEER_DESCRIPTION, beer_description);
+        args.putString(ARG_BEER_DESCRIPTION_IMAGE, beer_description_image);
+        args.putDouble(ARG_BEER_PRICE, beer_price);
+        args.putDouble(ARG_BEER_ABV, beer_abv);
+        args.putDouble(ARG_BEER_REVIEW, beer_review);
+        args.putInt(ARG_BEER_IBUS, beer_ibus);
+        args.putInt(ARG_BEER_SRM, beer_srm);
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,8 +101,15 @@ public class BeerFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            name = getArguments().getString(ARG_BEER_NAME);
+            style = getArguments().getString(ARG_BEER_STYLE);
+            description = getArguments().getString(ARG_BEER_DESCRIPTION);
+            description_image = getArguments().getString(ARG_BEER_DESCRIPTION_IMAGE);
+            price = getArguments().getDouble(ARG_BEER_PRICE);
+            abv = getArguments().getDouble(ARG_BEER_ABV);
+            review = getArguments().getDouble(ARG_BEER_REVIEW);
+            ibus = getArguments().getInt(ARG_BEER_IBUS);
+            srm = getArguments().getInt(ARG_BEER_SRM);
         }
     }
 
@@ -82,29 +117,36 @@ public class BeerFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_beer, container, false);
-        mRecyclerView = (RecyclerView) v.findViewById(R.id.beerListRecyclerView);
+        View beerView = inflater.inflate(R.layout.fragment_beer, container, false);
 
-        initializeViews();
-        return v;
-    }
-
-    private void initializeViews() {
-        initializeRecyclerView();
-    }
-
-    private void initializeRecyclerView() {
-        if (mRecyclerView == null) {
-            return;
-        }
         Picasso.with(this.getContext()).setIndicatorsEnabled(true);
 
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(this.getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        ImageView mDescriptionImageView = beerView.findViewById(R.id.beerDescriptionImageView);
+        TextView mNameView = beerView.findViewById(R.id.beerNameTextView);
+        TextView mStyleView = beerView.findViewById(R.id.beerStyleTextView);
+        TextView mAbvView = beerView.findViewById(R.id.beerAbvTextView);
+        TextView mIbusView = beerView.findViewById(R.id.beerIbusTextView);
+        TextView mSrmView = beerView.findViewById(R.id.beerSrmTextView);
+        TextView mPriceView = beerView.findViewById(R.id.beerPriceTextView);
+        TextView mReviewView = beerView.findViewById(R.id.beerReviewTextView);
+        TextView mDescriptionView = beerView.findViewById(R.id.beerDescriptionTextView);
+
+
+        mStyleView.setText(style);
+        mNameView.setText(name);
+        mAbvView.setText(String.format("%2.1f%%", abv));
+        mIbusView.setText(Double.toString(ibus));
+        mSrmView.setText(Integer.toString(srm));
+        mPriceView.setText(NumberFormat.getCurrencyInstance().format(price));
+        mReviewView.setText(Double.toString(review));
+        mDescriptionView.setText(description);
+
+        String thumbnail_uri = description_image;
         final Context context = this.getContext();
 
-        viewModel.getSingleBeer(beerId);
+        Picasso.with(context).load(thumbnail_uri).into(mDescriptionImageView);
+
+        return beerView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

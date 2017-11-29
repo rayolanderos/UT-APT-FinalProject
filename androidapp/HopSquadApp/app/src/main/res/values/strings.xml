@@ -32,6 +32,11 @@
     <string name="beerImageContentDescription">An image of a beer</string>
     <string name="ABVPlaceholder">99.9%</string>
     <string name="StylePlaceholder">Lager</string>
+    <string name="NamePlaceholder">Beer Name</string>
+    <string name="IBUSPlaceholder">0</string>
+    <string name="SRMPlaceholder">0</string>
+    <string name="ReviewPlaceHolder">5.0</string>
+    <string name="DescriptionPlaceHolder">This beer is described here.</string>
 
     <string-array name="beer_order_amount">
         <item>0</item>

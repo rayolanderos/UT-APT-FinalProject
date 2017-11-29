@@ -1,5 +1,6 @@
 package com.hopsquad.hopsquadapp.activities;
 
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -12,12 +13,14 @@ import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.hopsquad.hopsquadapp.R;
+import com.hopsquad.hopsquadapp.fragments.BeerFragment;
 import com.hopsquad.hopsquadapp.fragments.SettingsFragment;
 import com.hopsquad.hopsquadapp.fragments.TapListFragment;
 import com.hopsquad.hopsquadapp.fragments.UserHistoryFragment;
 import com.hopsquad.hopsquadapp.viewmodels.MainViewModel;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements TapListFragment.OnFragmentInteractionListener,
+        BeerFragment.OnFragmentInteractionListener{
 
     private MainViewModel viewModel;
     public static final String TAP_LIST_FRAGMENT_TAG = "TAP_LIST";
@@ -35,6 +38,7 @@ public class MainActivity extends BaseActivity {
             Fragment fragment = null;
             FragmentManager manager = getSupportFragmentManager();
             String tag = null;
+            String fragmentName = null;
             Class fragmentClass = null;
 
             if (viewModel.getSelectedNavigationItemId() == item.getItemId()) {
@@ -44,14 +48,17 @@ public class MainActivity extends BaseActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     tag = TAP_LIST_FRAGMENT_TAG;
+                    fragmentName = "Tap List";
                     fragmentClass = TapListFragment.class;
                     break;
                 case R.id.navigation_dashboard:
                     tag = USER_HISTORY_FRAGMENT_TAG;
+                    fragmentName = "User History";
                     fragmentClass = UserHistoryFragment.class;
                     break;
                 case R.id.navigation_notifications:
                     tag = SETTINGS_FRAGMENT_TAG;
+                    fragmentName = "Settings";
                     fragmentClass = SettingsFragment.class;
                     break;
             }
@@ -71,7 +78,7 @@ public class MainActivity extends BaseActivity {
 
             if (fragment != null && tag != null) {
                 viewModel.setSelectedNavigationItemId(item.getItemId());
-                switchFragment(fragment, tag);
+                switchFragment(fragment, tag, fragmentName);
                 return true;
             }
             return false;
@@ -79,12 +86,16 @@ public class MainActivity extends BaseActivity {
 
     };
 
-    private void switchFragment(Fragment fragment, String tag) {
+    private void switchFragment(Fragment fragment, String tag, String name) {
+        setActionBarTitle(name);
         currentFragment = fragment;
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content, fragment, tag)
                 .addToBackStack(null)
                 .commit();
+    }
+    public void setActionBarTitle(String title){
+        this.getSupportActionBar().setTitle(title);
     }
 
     @Override
@@ -124,6 +135,11 @@ public class MainActivity extends BaseActivity {
         if (currentFragment != null) {
             currentFragment.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri){
+        //you can leave it empty
     }
 
     private void signOut() {

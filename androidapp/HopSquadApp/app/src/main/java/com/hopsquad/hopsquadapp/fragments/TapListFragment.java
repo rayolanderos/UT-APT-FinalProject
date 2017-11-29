@@ -2,11 +2,13 @@ package com.hopsquad.hopsquadapp.fragments;
 
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -196,6 +198,21 @@ public class TapListFragment extends BaseFragment {
         }
     }
 
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+    }
+
     private void registerPlacedOrder(String token) {
         final LiveData<Order> orderLiveData = viewModel.placeOrder(token);
         final TapListFragment tapListFragment = this;
@@ -257,7 +274,7 @@ public class TapListFragment extends BaseFragment {
                 .build();
     }
 
-    private static class BeerAdapter extends RecyclerView.Adapter<BeerHolder> {
+    private class BeerAdapter extends RecyclerView.Adapter<BeerHolder> {
 
         private TapListViewModel tapList;
         private Context context;
@@ -303,12 +320,30 @@ public class TapListFragment extends BaseFragment {
 
             String thumbnail_uri = b.tap_list_image;
             Picasso.with(context).load(thumbnail_uri).into(holder.mImageView);
+            holder.mImageView.setClickable(true);
+            holder.mImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO: Launch beerFragment
+                    BeerFragment beerFragment = BeerFragment.newInstance(b.name, b.style, b.description,
+                            b.description_image, b.price, b.abv, b.ibus, b.srm, b.review );
+                    launchBeerDesctiption(beerFragment, "BEER_FRAGMENT");
+
+                }
+            });
         }
 
         @Override
         public int getItemCount() {
             return tapList.getTapList().getValue().size();
         }
+    }
+
+    private void launchBeerDesctiption(BaseFragment fragment, String tag){
+        this.getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content, fragment, tag)
+                .addToBackStack(null)
+                .commit();
     }
 
     private static class BeerHolder extends RecyclerView.ViewHolder {

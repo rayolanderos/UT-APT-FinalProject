@@ -1,13 +1,160 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.hopsquad.hopsquadapp.fragments.BeerFragment">
+    tools:context="com.hopsquad.hopsquadapp.fragments.BeerFragment"
+    tools:layout_editor_absoluteY="81dp">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
-</FrameLayout>
+
+    <ImageView
+        android:id="@+id/beerDescriptionImageView"
+        android:layout_width="360dp"
+        android:layout_height="192dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/common_google_signin_btn_text_dark_default"
+        android:contentDescription="@string/beerImageContentDescription"
+        android:scaleType="center"
+        android:src="@android:color/holo_blue_bright"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/beerNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/NamePlaceholder"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/beerDescriptionImageView" />
+
+    <TextView
+        android:id="@+id/beerReviewTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/ReviewPlaceHolder"
+        app:layout_constraintBaseline_toBaselineOf="@+id/reviewLabelTextView"
+        app:layout_constraintStart_toEndOf="@+id/reviewLabelTextView" />
+
+    <TextView
+        android:id="@+id/ibusLabelTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:text="IBUs"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/abvLabelTextView" />
+
+    <TextView
+        android:id="@+id/abvLabelTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:text="ABV"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/reviewLabelTextView" />
+
+    <TextView
+        android:id="@+id/srmLabelTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:text="SRM"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ibusLabelTextView" />
+
+    <TextView
+        android:id="@+id/beerIbusTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/IBUSPlaceholder"
+        app:layout_constraintBaseline_toBaselineOf="@+id/ibusLabelTextView"
+        app:layout_constraintStart_toEndOf="@+id/ibusLabelTextView" />
+
+    <TextView
+        android:id="@+id/beerAbvTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/ABVPlaceholder"
+        app:layout_constraintBaseline_toBaselineOf="@+id/abvLabelTextView"
+        app:layout_constraintStart_toEndOf="@+id/abvLabelTextView" />
+
+    <TextView
+        android:id="@+id/beerSrmTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="23dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/SRMPlaceholder"
+        app:layout_constraintBaseline_toBaselineOf="@+id/srmLabelTextView"
+        app:layout_constraintStart_toEndOf="@+id/srmLabelTextView" />
+
+    <TextView
+        android:id="@+id/beerDescriptionTextView"
+        android:layout_width="180dp"
+        android:layout_height="176dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/DescriptionPlaceHolder"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/beerAbvTextView"
+        app:layout_constraintTop_toBottomOf="@+id/beerStyleTextView" />
+
+    <TextView
+        android:id="@+id/reviewLabelTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="21dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:text="Review"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/beerStyleTextView" />
+
+    <TextView
+        android:id="@+id/beerPriceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/BeerPricePlaceHolder"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/srmLabelTextView" />
+
+    <TextView
+        android:id="@+id/beerStyleTextView"
+        android:layout_width="119dp"
+        android:layout_height="25dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/StylePlaceholder"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/beerNameTextView" />
+
+</android.support.constraint.ConstraintLayout>
