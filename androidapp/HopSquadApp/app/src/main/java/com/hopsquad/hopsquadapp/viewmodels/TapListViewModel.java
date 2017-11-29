@@ -106,12 +106,7 @@ public class TapListViewModel extends ViewModel {
         Order order = new Order();
 
         order.discount = 0;
-
-        try {
-            order.invoice = parseTokenInvoiceId(token);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        order.invoice = token;
         order.rewardId = 0;
         order.userId = getUserId();
         order.beers = getBeersByQuantity();
@@ -120,11 +115,7 @@ public class TapListViewModel extends ViewModel {
         return order;
     }
 
-    private String parseTokenInvoiceId(String token) throws JSONException {
-        JSONObject jsonObject = new JSONObject(token);
-        String token_id = jsonObject.getString("id");
-        return token_id;
-    }
+
 
     private String generatePseudoInvoice() {
         // TODO: Change this once Stripe is implemented.

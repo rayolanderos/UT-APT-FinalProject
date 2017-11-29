@@ -11,6 +11,8 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by memo on 15/11/17.
@@ -30,7 +32,10 @@ public interface Webservice {
     Call<List<HistoryOrder>> getAllOrders();
 
     @GET("/api/get_all_orders_by_user")
-    Call<List<HistoryOrder>> getAllOrdersByUserId(String userId);
+    Call<List<HistoryOrder>> getAllOrdersByUserId(@Query("userId") String userId);
+
+    @GET("/api/get_all_orders_by_user")
+    Call<List<HistoryOrder>> getAllOrdersByUserId(@Query("userId") String userId, @Query("limit") int limit);
 
     @POST("/api/add_order")
     Call<Order> addOrder(@Body Order order);

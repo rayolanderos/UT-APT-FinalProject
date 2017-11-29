@@ -40,6 +40,7 @@ import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.Wallet;
 import com.google.android.gms.wallet.WalletConstants;
 import com.hopsquad.hopsquadapp.R;
+import com.hopsquad.hopsquadapp.framework.PayWithGoogleService;
 import com.hopsquad.hopsquadapp.models.Beer;
 import com.hopsquad.hopsquadapp.api.WebServiceRepository;
 import com.hopsquad.hopsquadapp.models.Order;
@@ -49,56 +50,18 @@ import com.squareup.picasso.Picasso;
 import java.text.NumberFormat;
 import java.util.Arrays;
 
-public class TapListFragment extends BaseFragment {
+public class TapListFragment extends BaseFragment implements ConfirmOrderFragment.OnConfirmDialogOptionSelectedListener {
 
-    public static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 38192;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private BeerAdapter mAdapter;
     private FloatingActionButton placeOrderBtn;
-    private PaymentsClient mPaymentsClient;
-
     private TapListViewModel viewModel;
+    private PayWithGoogleService payService;
+
 
     public TapListFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode) {
-            case LOAD_PAYMENT_DATA_REQUEST_CODE:
-                switch (resultCode) {
-                    case Activity.RESULT_OK:
-                        PaymentData paymentData = PaymentData.getFromIntent(data);
-                        // You can get some data on the user's card, such as the brand and last 4 digits
-                        CardInfo info = paymentData.getCardInfo();
-                        // You can also pull the user address from the PaymentData object.
-                        UserAddress address = paymentData.getShippingAddress();
-                        // This is the raw JSON string version of your Stripe token.
-                        String rawToken = paymentData.getPaymentMethodToken().getToken();
-
-                        registerPlacedOrder(rawToken);
-
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        break;
-                    case AutoResolveHelper.RESULT_ERROR:
-                        Status status = AutoResolveHelper.getStatusFromIntent(data);
-                        // Log the status for debugging
-                        // Generally there is no need to show an error to
-                        // the user as the Google Payment API will do that
-                        break;
-                    default:
-                        // Do nothing.
-                }
-                break; // Breaks the case LOAD_PAYMENT_DATA_REQUEST_CODE
-            // Handle any other startActivityForResult calls you may have made.
-            default:
-                // Do nothing.
-        }
     }
 
     @Override
@@ -109,31 +72,7 @@ public class TapListFragment extends BaseFragment {
         viewModel.setRepository(new WebServiceRepository());
         viewModel.init();
 
-        initializePaymentsClient();
-    }
-
-    private void initializePaymentsClient() {
-        mPaymentsClient = Wallet.getPaymentsClient(this.getContext(), new Wallet.WalletOptions.Builder()
-                .setEnvironment(WalletConstants.ENVIRONMENT_TEST).build());
-
-        IsReadyToPayRequest request = IsReadyToPayRequest.newBuilder()
-                .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_CARD)
-                .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_TOKENIZED_CARD)
-                .build();
-
-        Task<Boolean> task = mPaymentsClient.isReadyToPay(request);
-        task.addOnCompleteListener(new OnCompleteListener<Boolean>() {
-            @Override
-            public void onComplete(@NonNull Task<Boolean> task) {
-                try {
-                    boolean result = task.getResult(ApiException.class);
-                    viewModel.setIsReadyToPay(result);
-
-                } catch (ApiException apie) {
-                    apie.printStackTrace();
-                }
-            }
-        });
+        payService = new PayWithGoogleService(this.getContext());
     }
 
     @Override
@@ -146,6 +85,29 @@ public class TapListFragment extends BaseFragment {
 
         initializeViews();
         return v;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        String token = null;
+
+        if (payService.canHandleRequestCode(requestCode)) {
+            payService.handleActivityResult(resultCode, data);
+            token = payService.getResultToken();
+        }
+
+        if (token != null) {
+            registerPlacedOrder(token);
+        }
+    }
+
+    @Override
+    public void onConfirmDialogOptionSelected(boolean confirmed) {
+        if (confirmed) {
+            payService.confirmOrder(this.getActivity(), viewModel.getOrderTotal());
+        }
     }
 
     private void initializeViews() {
@@ -170,7 +132,8 @@ public class TapListFragment extends BaseFragment {
     }
 
     private void displayOrderConfirmation() {
-        ConfirmOrderFragment confirmDialog = new ConfirmOrderFragment();
+        ConfirmOrderFragment confirmDialog = ConfirmOrderFragment.newInstance(viewModel.getOrderTotal());
+        confirmDialog.setOnConfirmDialogOptionSelectedListener(this);
         confirmDialog.show(this.getFragmentManager(), "CONFIRM_ORDER");
     }
 
@@ -187,15 +150,6 @@ public class TapListFragment extends BaseFragment {
         viewModel.getTapList().observe(this.getActivity(),(beers) -> {
                 refreshBeerList();
             });
-    }
-
-    public void confirmOrder() {
-        PaymentDataRequest request = createPaymentDataRequest();
-        if (request != null) {
-            AutoResolveHelper.resolveTask(mPaymentsClient.loadPaymentData(request),
-                    this.getActivity(),
-                    LOAD_PAYMENT_DATA_REQUEST_CODE);
-        }
     }
 
     /**
@@ -216,18 +170,14 @@ public class TapListFragment extends BaseFragment {
     private void registerPlacedOrder(String token) {
         final LiveData<Order> orderLiveData = viewModel.placeOrder(token);
         final TapListFragment tapListFragment = this;
-        orderLiveData.observe(tapListFragment, new Observer<Order>() {
-            @Override
-            public void onChanged(@Nullable Order order) {
-
-                if (order == null || order.invoice == null) {
-                    tapListFragment.showToast(R.string.order_confirmation_generic_error);
-                } else {
-                    tapListFragment.showToast(R.string.order_succesfully_placed_msg);
-                    viewModel.clearOrder();
-                    refreshBeerList();
-                    orderLiveData.removeObservers(tapListFragment);
-                }
+        orderLiveData.observe(tapListFragment, order -> {
+            if (order == null || order.invoice == null) {
+                tapListFragment.showToast(R.string.order_confirmation_generic_error);
+            } else {
+                tapListFragment.showToast(R.string.order_succesfully_placed_msg);
+                viewModel.clearOrder();
+                refreshBeerList();
+                orderLiveData.removeObservers(tapListFragment);
             }
         });
     }
@@ -237,41 +187,6 @@ public class TapListFragment extends BaseFragment {
         mAdapter.isRefreshing = true;
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.isRefreshing = false;
-    }
-
-    private PaymentDataRequest createPaymentDataRequest() {
-        String totalPrice = String.format("%.2f", viewModel.getOrderTotal());
-        PaymentDataRequest.Builder request =
-                PaymentDataRequest.newBuilder()
-                        .setTransactionInfo(
-                                TransactionInfo.newBuilder()
-
-                                        .setTotalPriceStatus(WalletConstants.TOTAL_PRICE_STATUS_FINAL)
-                                        .setTotalPrice(totalPrice)
-                                        .setCurrencyCode("USD")
-                                        .build())
-                        .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_CARD)
-                        .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_TOKENIZED_CARD)
-                        .setCardRequirements(
-                                CardRequirements.newBuilder()
-                                        .addAllowedCardNetworks(Arrays.asList(
-                                                WalletConstants.CARD_NETWORK_AMEX,
-                                                WalletConstants.CARD_NETWORK_DISCOVER,
-                                                WalletConstants.CARD_NETWORK_VISA,
-                                                WalletConstants.CARD_NETWORK_MASTERCARD))
-                                        .build());
-
-        request.setPaymentMethodTokenizationParameters(createTokenizationParameters());
-        return request.build();
-    }
-
-    private PaymentMethodTokenizationParameters createTokenizationParameters() {
-        return PaymentMethodTokenizationParameters.newBuilder()
-                .setPaymentMethodTokenizationType(WalletConstants.PAYMENT_METHOD_TOKENIZATION_TYPE_PAYMENT_GATEWAY)
-                .addParameter("gateway", "stripe")
-                .addParameter("stripe:publishableKey", WebServiceRepository.STRIPE_PUBLISHABLE_KEY)
-                .addParameter("stripe:version", "5.1.0")
-                .build();
     }
 
     private class BeerAdapter extends RecyclerView.Adapter<BeerHolder> {
@@ -317,6 +232,10 @@ public class TapListFragment extends BaseFragment {
                 }
             });
             holder.mSpinnerView.setSelection(tapList.getQuantityOrdered(b.id), true);
+            holder.mSpinnerView.setEnabled(b.on_tap);
+            if (!b.on_tap) {
+                holder.mPriceView.setText("$--.--");
+            }
 
             String thumbnail_uri = b.tap_list_image;
             Picasso.with(context).load(thumbnail_uri).into(holder.mImageView);

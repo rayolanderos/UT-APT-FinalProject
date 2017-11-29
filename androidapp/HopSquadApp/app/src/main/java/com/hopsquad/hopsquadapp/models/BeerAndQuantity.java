@@ -8,7 +8,9 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class BeerAndQuantity {
-    private String id;
+
+    public String id;
+
     public int quantity;
 
     @SerializedName("beer_name")

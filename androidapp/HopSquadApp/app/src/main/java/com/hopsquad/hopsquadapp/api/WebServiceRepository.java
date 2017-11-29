@@ -121,15 +121,34 @@ public class WebServiceRepository {
 
                 ArrayList<HistoryOrder> filteredValue = new ArrayList<>();
                 for (HistoryOrder order : value) {
-//                    if (userId != null && userId.equals(order.userId)) {
+                    if (userId != null && userId.equals(order.userId)) {
                         filteredValue.add(order);
                         if (filteredValue.size() == 3) {
                             break;
                         }
-//                    }
+                    }
                 }
 
                 data.setValue(filteredValue);
+            }
+
+            @Override
+            public void onFailure(Call<List<HistoryOrder>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+        return data;
+    }
+
+    public LiveData<List<HistoryOrder>> getAllOrdersByUser(String userId) {
+        final MutableLiveData<List<HistoryOrder>> data = new MutableLiveData<>();
+
+        getAllOrdersWebService.getAllOrdersByUserId(userId, 5).enqueue(new Callback<List<HistoryOrder>>() {
+            @Override
+            public void onResponse(Call<List<HistoryOrder>> call, Response<List<HistoryOrder>> response) {
+                List<HistoryOrder> value = response.isSuccessful() ? response.body() : new ArrayList<>();
+                data.setValue(value);
             }
 
             @Override
