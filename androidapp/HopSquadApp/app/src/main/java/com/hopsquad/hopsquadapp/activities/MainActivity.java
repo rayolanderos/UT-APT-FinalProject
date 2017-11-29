@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,6 +20,9 @@ import com.hopsquad.hopsquadapp.fragments.SettingsFragment;
 import com.hopsquad.hopsquadapp.fragments.TapListFragment;
 import com.hopsquad.hopsquadapp.fragments.UserHistoryFragment;
 import com.hopsquad.hopsquadapp.viewmodels.MainViewModel;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class MainActivity extends BaseActivity implements TapListFragment.OnFragmentInteractionListener,
         BeerFragment.OnFragmentInteractionListener{
@@ -115,6 +120,24 @@ public class MainActivity extends BaseActivity implements TapListFragment.OnFrag
             navigation.setSelectedItemId(R.id.navigation_home);
         } else {
             navigation.setSelectedItemId(selectedNavigationItemId);
+        }
+
+        // Does not work yet, but it's an attempt to fix the
+        // by design decision of android to not allow custom
+        // icons in v 3 and up.
+
+        Menu menu = navigation.getMenu();
+//        menu.findItem(R.id.navigation_home).setIcon(R.drawable.ic_beer);
+//        menu.findItem(R.id.navigation_dashboard).setIcon(R.drawable.ic_user);
+//        menu.findItem(R.id.navigation_notifications).setIcon(R.drawable.ic_settings);
+
+        Method menuMethod = null;
+        try {
+            menuMethod = menu.getClass().getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
+            menuMethod.setAccessible(true);
+            menuMethod.invoke(menu, true);
+        } catch (Exception e) {
+            Log.e("MainActivity", e.toString());
         }
     }
 
