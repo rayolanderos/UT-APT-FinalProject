@@ -3,12 +3,15 @@ package com.hopsquad.hopsquadapp.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -17,6 +20,7 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -26,7 +30,17 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.hopsquad.hopsquadapp.R;
+import com.hopsquad.hopsquadapp.api.WebServiceRepository;
+import com.hopsquad.hopsquadapp.api.Webservice;
+import com.hopsquad.hopsquadapp.fragments.DatePickerFragment;
+import com.hopsquad.hopsquadapp.models.HSUser;
+import com.hopsquad.hopsquadapp.viewmodels.LoginViewModel;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 
 /**
@@ -35,24 +49,30 @@ import com.hopsquad.hopsquadapp.R;
 public class LoginActivity extends BaseActivity {
 
     // UI references.
+    private AutoCompleteTextView mUserNameView;
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
 
+    private LoginViewModel viewModel;
+
     private FirebaseAuth mAuth;
-    private FirebaseUser mUser;
+    private FirebaseUser firebaseUser;
+    private EditText mDateOfBirthView;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        viewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
+        viewModel.setRepository(new WebServiceRepository());
         mAuth = FirebaseAuth.getInstance();
 
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-
+        mUserNameView = (AutoCompleteTextView) findViewById(R.id.name);
         mPasswordView = (EditText) findViewById(R.id.password);
+        mDateOfBirthView = (EditText) findViewById(R.id.dateOfBirth);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -64,13 +84,29 @@ public class LoginActivity extends BaseActivity {
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+        mDateOfBirthView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onClick(View view) {
-                attemptLogin();
+            public void onFocusChange(View view, boolean gotFocus) {
+                if (gotFocus) {
+                    DatePickerFragment newFragment = new DatePickerFragment();
+                    newFragment.show(getSupportFragmentManager(), "datePicker");
+                }
             }
         });
+
+        viewModel.getLiveUserDateOfBirth().observe(this, new Observer<Date>() {
+            @Override
+            public void onChanged(@Nullable Date date) {
+                SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+                mDateOfBirthView.setText(formatter.format(date));
+            }
+        });
+
+        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
+        mEmailSignInButton.setOnClickListener((view) -> {
+                attemptLogin();
+            }
+        );
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -79,8 +115,8 @@ public class LoginActivity extends BaseActivity {
     @Override
     public void onStart() {
         super.onStart();
-        mUser = mAuth.getCurrentUser();
-        if (mUser != null) {
+        firebaseUser = mAuth.getCurrentUser();
+        if (firebaseUser != null) {
             launchMainActivity();
         }
     }
@@ -104,6 +140,8 @@ public class LoginActivity extends BaseActivity {
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+        String userName = mUserNameView.getText().toString();
+        Date dateOfBirth = viewModel.getUserDateOfBirth();
 
         boolean cancel = false;
         View focusView = null;
@@ -135,11 +173,13 @@ public class LoginActivity extends BaseActivity {
             // perform the user login attempt.
             showProgress(true);
 
-            tryLoginOrCreateAccount(email, password);
+            tryLoginOrCreateAccount(dateOfBirth, userName, email, password);
         }
     }
 
-    private void tryLoginOrCreateAccount(String email, final String password) {
+
+
+    public void tryLoginOrCreateAccount(Date date, String username, String email, final String password) {
         if (mAuth == null) {
             Log.d("AUTH", "Couldn't find reference to FireBaseAuth");
             return;
@@ -147,40 +187,40 @@ public class LoginActivity extends BaseActivity {
 
         final String loginEmail = email;
         final String loginPassword = password;
+        final String loginUserName = username;
+        final Date dateOfBirth = date;
 
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                    // This means that the account already exists, we will try to
-                    // Login instead.
-
-                    mAuth.signInWithEmailAndPassword(loginEmail, loginPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            showProgress(false);
-                            if(task.isSuccessful()) {
-                                Log.d("AUTH", "Existing User, Welcome back!");
-                                launchMainActivity();
-                            } else {
-                                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                                mPasswordView.requestFocus();
-                            }
-                        }
-                    });
-                } else {
-                    Log.d("AUTH", "New User Created");
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    user.sendEmailVerification(); // Won't able to buy if doesn't verify email.
-                    showProgress(false);
-                    launchMainActivity();
-                }
-            }
-        });
+                .addOnCompleteListener(this, (task) -> {
+                    if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                        // This means that the account already exists, we will try to
+                        // Login instead.
+                        mAuth.signInWithEmailAndPassword(loginEmail, loginPassword)
+                                .addOnCompleteListener((signIntask) -> {
+                                    showProgress(false);
+                                    if (signIntask.isSuccessful()) {
+                                        Log.d("AUTH", "Existing User, Welcome back!");
+                                        viewModel.registerUser(signIntask.getResult().getUser());
+                                        launchMainActivity();
+                                    } else {
+                                        mPasswordView.setError(getString(R.string.error_incorrect_password));
+                                        mPasswordView.requestFocus();
+                                    }
+                                });
+                    } else {
+                        Log.d("AUTH", "New User Created");
+                        FirebaseUser fbUser = mAuth.getCurrentUser();
+                        fbUser.updateProfile(new UserProfileChangeRequest.Builder()
+                                .setDisplayName(loginUserName)
+                                .build()).addOnCompleteListener((updateProfileTask) -> {
+                                    fbUser.sendEmailVerification();
+                                    viewModel.registerUser(fbUser);
+                                    showProgress(false);
+                                    launchMainActivity();
+                                });
+                    }
+                });
     }
-
-
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic

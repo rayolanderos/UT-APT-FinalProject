@@ -4,7 +4,7 @@ from google.appengine.ext import ndb
 
 class Order(ndb.Model):
     
-    user_id = ndb.IntegerProperty()
+    fb_user_id = ndb.StringProperty()
     order_total = ndb.FloatProperty()
     invoice_number = ndb.StringProperty()
     status = ndb.IntegerProperty()

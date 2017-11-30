@@ -5,7 +5,7 @@ android {
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.hopsquad.hopsquadapp"
-        minSdkVersion 21
+        minSdkVersion 22
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -20,16 +20,24 @@ android {
     configurations.all {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.1'
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    productFlavors {
+    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    testCompile 'junit:junit:4.12'
+    compile 'com.google.android.gms:play-services-wallet:11.4.2'
+    compile 'com.google.firebase:firebase-auth:11.4.2'
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support:design:26.+'
-    compile 'com.google.firebase:firebase-auth:10.0.1'
     compile 'com.android.support:support-v4:26.+'
     compile 'com.stripe:stripe-android:5.1.0'
     testCompile 'junit:junit:4.12'
@@ -39,19 +47,7 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'javax.inject:javax.inject:1'
-
-    compile 'com.google.dagger:dagger:2.13'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.13'
-    compile 'com.google.dagger:dagger-android:2.13'
-    compile 'com.google.dagger:dagger-android-support:2.13' // if you use the support libraries
-    annotationProcessor 'com.google.dagger:dagger-android-processor:2.13'
     compile 'com.squareup.picasso:picasso:2.5.2'
 }
-
-
-
-
-
-
 
 apply plugin: 'com.google.gms.google-services'

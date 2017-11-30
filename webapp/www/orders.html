@@ -38,7 +38,7 @@
                     {% for order in orders %}
                     <tr id="order-{{ order.id }}">
                       <td>{{order.timestamp}}</td>
-                      <td>{{order.user_id}}</td>
+                      <td>{{order.customer_name}}</td>
                       <td>
                         {% for detail in order.details %}
                           {{detail.beer_name}} <b> x{{detail.quantity }} </b>

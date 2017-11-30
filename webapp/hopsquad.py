@@ -3,6 +3,8 @@ import os
 import jinja2
 import webapp2
 
+from google.appengine.api import users
+
 from controllers import tap_list
 from controllers import employees
 from controllers import orders
@@ -20,6 +22,7 @@ from services import get_all_employees
 from services import add_order
 from services import get_order
 from services import get_all_orders
+from services import get_all_orders_by_user
 from services import add_user
 from services import update_user
 from services import get_user
@@ -35,9 +38,22 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 class MainPage(webapp2.RequestHandler):
 
     def get(self):
-        
-        self.redirect('/tap_list')
+        user = users.get_current_user()
 
+        if user:
+            logout_url = users.create_logout_url('/')
+
+            self.redirect('/tap_list')
+        else:
+            login_url = users.create_login_url('/')
+
+            template_values = {
+                'login_url': login_url
+            }
+
+            template = JINJA_ENVIRONMENT.get_template('login.html')
+            self.response.write(template.render(template_values))
+        
 
 app = webapp2.WSGIApplication([
     webapp2.Route('/', MainPage, name='home'),
@@ -58,6 +74,7 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/api/add_order', add_order.AddOrder, name='add-order'),
     webapp2.Route('/api/get_order', get_order.GetOrder, name='get-order'),
     webapp2.Route('/api/get_all_orders', get_all_orders.GetAllOrders, name='get-all-orders'),
+    webapp2.Route('/api/get_all_orders_by_user', get_all_orders_by_user.GetAllOrdersByUser, name='get-all-orders-by-user'),
     webapp2.Route('/api/add_user', add_user.AddUser, name='add-user'),
     webapp2.Route('/api/update_user', update_user.UpdateUser, name='update-user'),
     webapp2.Route('/api/get_user', get_user.GetUser, name='get-user')

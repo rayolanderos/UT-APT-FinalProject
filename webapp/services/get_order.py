@@ -19,7 +19,7 @@ class GetOrder(webapp2.RequestHandler):
 			order_data = { 
 				'id': order.key.id(), 
 		    	'order_total': order.order_total, 
-		    	'user_id': order.user_id, 
+		    	'user_id': order.fb_user_id, 
 		    	'status': order.status, 
 		    	'reward_id': order.reward_id, 
 		    	'discount': order.discount, 
