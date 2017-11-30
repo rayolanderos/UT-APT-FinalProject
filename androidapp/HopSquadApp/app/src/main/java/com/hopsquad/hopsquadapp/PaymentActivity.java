@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.hopsquad.hopsquadapp.viewmodels.TapListViewModel;
 import com.stripe.android.Stripe;
 import com.stripe.android.TokenCallback;
 import com.stripe.android.model.Token;
@@ -37,21 +38,23 @@ public class PaymentActivity extends AppCompatActivity {
     private void submitPayment() {
         Card cardToSave = mCardInputWidget.getCard();
         if (cardToSave == null) {
-            // ToDo Input empty
+            // ToDo error if Input empty
         }
         cardToSave.setName(mName.getText().toString());
         cardToSave.setAddressZip(mZipcode.getText().toString());
         cardToSave.validateNumber();
         cardToSave.validateCVC();
         if (!cardToSave.validateCard()){
-            // ToDo if card not valid
+            // ToDo error if card not valid
         }
-        Stripe stripe = new Stripe(this, "pk_test_6pRNASCoBOKtIshFeQd4XMUh"/*temporary key, need to get actual one*/);
+        Stripe stripe = new Stripe(this, "pk_test_6pRNASCoBOKtIshFeQd4XMUh"/*ToDo temporary key, need to get actual one*/);
         stripe.createToken(
                 cardToSave,
                 new TokenCallback() {
                     public void onSuccess(Token token) {
-                        // ToDo Send token to your server, need to grab the payment info too to send
+                        // ToDo Send token to your server, the following 2 need to get to process_payment.py on the webapp
+                        Float totalPrice = TapListViewModel.getOrderTotal();
+                        Token paymentToken = token;
                     }
                     public void onError(Exception error) {
                         // ToDo Show localized error message
