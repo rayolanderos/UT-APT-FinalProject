@@ -199,4 +199,42 @@ public class WebServiceRepository {
 
         return data;
     }
+
+    public LiveData<HSUser> updateUser(HSUser user) {
+
+        final MutableLiveData<HSUser> data = new MutableLiveData<>();
+
+        webservice.updateUser(user).enqueue(new Callback<HSUser>() {
+            @Override
+            public void onResponse(Call<HSUser> call, Response<HSUser> response) {
+                HSUser value = response.isSuccessful() ? response.body() : new HSUser();
+                data.setValue(value);
+            }
+
+            @Override
+            public void onFailure(Call<HSUser> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+        return data;
+    }
+
+    public LiveData<HSUser> getUser(String fbUserId) {
+        final MutableLiveData<HSUser>  data = new MutableLiveData<>();
+
+        webservice.getUser(fbUserId).enqueue(new Callback<HSUser>() {
+            @Override
+            public void onResponse(Call<HSUser> call, Response<HSUser> response) {
+                data.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<HSUser> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+        return data;
+    }
 }

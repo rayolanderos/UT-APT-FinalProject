@@ -42,4 +42,10 @@ public interface Webservice {
 
     @POST("/api/add_user")
     Call<HSUser> addUser(@Body HSUser user);
+
+    @POST("/api/update_user")
+    Call<HSUser> updateUser(@Body HSUser user);
+
+    @GET("/api/get_user")
+    Call<HSUser> getUser(@Body String fbUserId);
 }
