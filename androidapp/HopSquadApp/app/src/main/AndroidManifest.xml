@@ -34,7 +34,7 @@
             android:name=".activities.MainActivity"
             android:label="@string/title_activity_main"></activity>
         <activity
-            android:name="PaymentActivity"
+            android:name=".activities.PaymentActivity"
             android:label="PaymentActivity"></activity>
     </application>
 

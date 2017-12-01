@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.hopsquad.hopsquadapp.PaymentActivity;
+import com.hopsquad.hopsquadapp.activities.PaymentActivity;
 import com.hopsquad.hopsquadapp.R;
 import com.hopsquad.hopsquadapp.framework.PayWithGoogleService;
 import com.hopsquad.hopsquadapp.models.Beer;

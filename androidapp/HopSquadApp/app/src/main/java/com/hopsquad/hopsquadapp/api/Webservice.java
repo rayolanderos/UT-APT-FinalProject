@@ -1,6 +1,5 @@
 package com.hopsquad.hopsquadapp.api;
 
-import com.hopsquad.hopsquadapp.PaymentActivity;
 import com.hopsquad.hopsquadapp.models.Beer;
 import com.hopsquad.hopsquadapp.models.HSUser;
 import com.hopsquad.hopsquadapp.models.HistoryOrder;
@@ -13,7 +12,6 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**

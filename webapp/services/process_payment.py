@@ -3,7 +3,7 @@ import json
 import logging
 from google.appengine.ext import ndb
 from google.appengine.api import search
-
+import stripe
 
 # installing stripe library - "pip install --upgrade stripe" in terminal
 
@@ -15,7 +15,7 @@ class ProcessPayment(webapp2.RequestHandler):
         dict_object = json.loads(json_string)
 
         total_price = float( dict_object['totalPrice'] )
-        token = token( dict_object['paymentToken'] )
+        token = String( dict_object['paymentToken'] )
 
         # Set your secret key: remember to change this to your live secret key in production
         # See your keys here: https://dashboard.stripe.com/account/apikeys

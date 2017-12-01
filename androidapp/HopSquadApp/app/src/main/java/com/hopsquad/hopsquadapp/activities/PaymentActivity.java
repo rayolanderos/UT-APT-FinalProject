@@ -1,6 +1,8 @@
-package com.hopsquad.hopsquadapp;
+package com.hopsquad.hopsquadapp.activities;
 
+import android.app.Activity;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,8 +13,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hopsquad.hopsquadapp.R;
 import com.hopsquad.hopsquadapp.api.WebServiceRepository;
 import com.hopsquad.hopsquadapp.models.StripeInfo;
+import com.hopsquad.hopsquadapp.viewmodels.OrderHistoryViewModel;
 import com.hopsquad.hopsquadapp.viewmodels.TapListViewModel;
 import com.stripe.android.Stripe;
 import com.stripe.android.TokenCallback;
@@ -29,6 +33,7 @@ public class PaymentActivity extends AppCompatActivity {
     private LiveData<StripeInfo> si;
     private WebServiceRepository repository;
     private Float totalPrice;
+    private OrderHistoryViewModel viewModel;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +47,10 @@ public class PaymentActivity extends AppCompatActivity {
         Button mEmailSignInButton = (Button) findViewById(R.id.submit_button);
         mCardInputWidget = (CardInputWidget) findViewById(R.id.card_input_widget);
         repository = new WebServiceRepository();
+        viewModel = ViewModelProviders.of(this).get(OrderHistoryViewModel.class);
+        viewModel.setRepository(new WebServiceRepository());
+        viewModel.init();
+
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,6 +84,8 @@ public class PaymentActivity extends AppCompatActivity {
                             public void onSuccess(Token token) {
                                 Token paymentToken = token;
                                 sendStripe(totalPrice, paymentToken);
+                                finish();
+                                //launchMainActivity();
                             }
 
                             public void onError(Exception error) {
@@ -87,6 +98,11 @@ public class PaymentActivity extends AppCompatActivity {
 
     }
 
+    private void launchMainActivity() {
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
+    }
+
     public LiveData<StripeInfo> sendStripe(Float price, Token payment) {
 
         StripeInfo stripe = new StripeInfo();
@@ -94,10 +110,17 @@ public class PaymentActivity extends AppCompatActivity {
         stripe.paymentToken = payment;
 
         si = repository.sendStripe(stripe);
-        if((si.getValue().paymentToken) == null)
-        {
-            Toast.makeText(getApplicationContext(), "Error processing payment", Toast.LENGTH_LONG);
-        }
+        si.observe(this, order -> {
+            if (order == null || order.paymentToken == null) {
+                Toast.makeText(getApplicationContext(), "Error processing payment", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.order_succesfully_placed_msg, Toast.LENGTH_LONG).show();
+                // ToDo not sure If I did the order correct (creating the viewModel object)
+                viewModel.setHistoryOrderSelected(null);
+                // Todo Refresh orders list
+                si.removeObservers(this);
+            }
+        });
         return si;
     }
 
