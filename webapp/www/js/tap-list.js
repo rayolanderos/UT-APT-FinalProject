@@ -56,7 +56,7 @@ $(document).ready( function() {
         url: '/generate_upload_url',
         async: false,
         success: function(data) {
-          ajaxUpload(data, '#addBeerDescriptionImageForm-'+beerId, '#addBeerDescriptionImage-'+beerId, 'update', beerId);
+          ajaxUpload(data, '#updateBeerDescriptionImageForm-'+beerId, '#updateBeerDescriptionImage-'+beerId, 'update', beerId);
         }
       });
     }
@@ -118,7 +118,7 @@ function postUploadCallback(formAction, id=""){
   else if(formAction == "update"){
     var updateBeerTapListImage = $("#updateBeerTapListImage-"+id).val();
     var updateBeerDescriptionImage = $("#updateBeerDescriptionImage-"+id).val();
-    if(updateBeerTapListImage != "" && updateBeerTapListImage != "")
+    if(updateBeerTapListImage != "" && updateBeerDescriptionImage != "")
     $("#updateBeerForm-"+id).submit();
   }
 }
