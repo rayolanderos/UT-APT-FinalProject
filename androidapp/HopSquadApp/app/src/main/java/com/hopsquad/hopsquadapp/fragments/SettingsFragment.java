@@ -77,9 +77,12 @@ public class SettingsFragment extends BaseFragment {
         // Inflate the layout for this fragment
         View inflatedView = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        LiveData <HSUser> user = viewModel.getUser();
+        LiveData <HSUser> userLiveData = viewModel.getUser();
 
-        //Log.e("SETTINGS_FRAGMENT", user.toString());
+        HSUser user = userLiveData.getValue();
+
+        if (user != null)
+            Log.d("SETTINGS_FRAGMENT", user.name);
 
         // Inflate the layout for this fragment
         return inflatedView;

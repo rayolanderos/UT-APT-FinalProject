@@ -2,6 +2,7 @@ package com.hopsquad.hopsquadapp.viewmodels;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,6 +28,8 @@ public class SettingsViewModel extends ViewModel {
     public void init() {
         fbUser = FirebaseAuth.getInstance().getCurrentUser();
         user = webRepo.getUser(fbUser.getUid());
+        Log.d("SETTING_VIEW_MODEL", "fbUserId->" + fbUser.getUid());
+        Log.d("SETTING_VIEW_MODEL", "user.getValue->"+user.getValue());
     }
 
     public void setRepository(WebServiceRepository repo) {

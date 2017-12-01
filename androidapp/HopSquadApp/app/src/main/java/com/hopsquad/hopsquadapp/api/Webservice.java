@@ -26,7 +26,7 @@ public interface Webservice {
     Call<List<Beer>> getTapList();
 
     @GET("/api/get_beer")
-    Call<Beer> getBeer(@Body int beerId);
+    Call<Beer> getBeer(@Query("beerId") int beerId);
 
     @GET("/api/get_all_orders")
     Call<List<HistoryOrder>> getAllOrders();
