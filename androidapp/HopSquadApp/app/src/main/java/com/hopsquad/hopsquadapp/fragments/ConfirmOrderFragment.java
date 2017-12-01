@@ -19,7 +19,7 @@ public class ConfirmOrderFragment extends BaseDialogFragment {
 
     public interface OnConfirmDialogOptionSelectedListener {
 
-        void onConfirmDialogOptionSelected(boolean confirmed);
+        void onConfirmDialogOptionSelected(boolean confirmed, String type);
     }
 
     public static ConfirmOrderFragment newInstance(float total) {
@@ -56,11 +56,14 @@ public class ConfirmOrderFragment extends BaseDialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(dialogView)
                 .setTitle(R.string.confirm_order_dialog_title)
-                .setPositiveButton(R.string.confirm_order_dialog_button, (dialogInterface, i) -> {
-                    mListener.onConfirmDialogOptionSelected(true);
+                .setPositiveButton("Pay with Google", (dialogInterface, i) -> {
+                    mListener.onConfirmDialogOptionSelected(true, "g");
+                })
+                .setPositiveButton("Pay with Stripe", (dialogInterface, i) -> {
+                    mListener.onConfirmDialogOptionSelected(true, "s");
                 })
                 .setNegativeButton(R.string.cancel_order_button_dialog, (dialogInterface, i) -> {
-                    mListener.onConfirmDialogOptionSelected(false);
+                    mListener.onConfirmDialogOptionSelected(false, "");
                 });
         return builder.create();
     }

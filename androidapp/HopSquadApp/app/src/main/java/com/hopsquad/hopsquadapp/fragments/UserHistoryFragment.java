@@ -101,7 +101,7 @@ public class UserHistoryFragment extends BaseFragment implements ConfirmOrderFra
     }
 
     @Override
-    public void onConfirmDialogOptionSelected(boolean confirmed) {
+    public void onConfirmDialogOptionSelected(boolean confirmed, String type) {
         if (confirmed) {
             payService.confirmOrder(getActivity(), viewModel.getSelectedOrder().getValue().order_total);
         }

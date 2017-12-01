@@ -9,6 +9,7 @@ import com.hopsquad.hopsquadapp.models.Beer;
 import com.hopsquad.hopsquadapp.models.HSUser;
 import com.hopsquad.hopsquadapp.models.HistoryOrder;
 import com.hopsquad.hopsquadapp.models.Order;
+import com.hopsquad.hopsquadapp.models.StripeInfo;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -175,6 +176,25 @@ public class WebServiceRepository {
 
             @Override
             public void onFailure(Call<HSUser> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+        return data;
+    }
+
+    public LiveData<StripeInfo> sendStripe(StripeInfo si) {
+        final MutableLiveData<StripeInfo> data = new MutableLiveData<>();
+
+        webservice.sendStripe(si).enqueue(new Callback<StripeInfo>() {
+            @Override
+            public void onResponse(Call<StripeInfo> call, Response<StripeInfo> response) {
+                StripeInfo value = response.isSuccessful() ? response.body() : new StripeInfo();
+                data.setValue(value);
+            }
+
+            @Override
+            public void onFailure(Call<StripeInfo> call, Throwable t) {
                 t.printStackTrace();
             }
         });

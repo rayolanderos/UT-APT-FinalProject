@@ -26,6 +26,7 @@ from services import get_all_orders_by_user
 from services import add_user
 from services import update_user
 from services import get_user
+from services import process_payment
 
 
 templates_dir = os.path.normpath(os.path.dirname(__file__) + '/www/')

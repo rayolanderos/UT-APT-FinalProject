@@ -2,6 +2,7 @@ package com.hopsquad.hopsquadapp.fragments;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -37,6 +38,7 @@ import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.Wallet;
 import com.google.android.gms.wallet.WalletConstants;
+import com.hopsquad.hopsquadapp.PaymentActivity;
 import com.hopsquad.hopsquadapp.R;
 import com.hopsquad.hopsquadapp.framework.PayWithGoogleService;
 import com.hopsquad.hopsquadapp.models.Beer;
@@ -102,9 +104,14 @@ public class TapListFragment extends BaseFragment implements ConfirmOrderFragmen
     }
 
     @Override
-    public void onConfirmDialogOptionSelected(boolean confirmed) {
-        if (confirmed) {
+    public void onConfirmDialogOptionSelected(boolean confirmed, String type) {
+        if (confirmed && type.equals("g")) {
             payService.confirmOrder(this.getActivity(), viewModel.getOrderTotal());
+        }
+        else if (confirmed && type.equals("s")) {
+            Intent intent = new Intent(this.getContext(), PaymentActivity.class);
+            intent.putExtra("orderTotal", viewModel.getOrderTotal());
+            startActivity(intent);
         }
     }
 

@@ -1,9 +1,11 @@
 package com.hopsquad.hopsquadapp.api;
 
+import com.hopsquad.hopsquadapp.PaymentActivity;
 import com.hopsquad.hopsquadapp.models.Beer;
 import com.hopsquad.hopsquadapp.models.HSUser;
 import com.hopsquad.hopsquadapp.models.HistoryOrder;
 import com.hopsquad.hopsquadapp.models.Order;
+import com.hopsquad.hopsquadapp.models.StripeInfo;
 
 import java.util.List;
 
@@ -39,4 +41,7 @@ public interface Webservice {
 
     @POST("/api/add_user")
     Call<HSUser> addUser(@Body HSUser user);
+
+    @POST("/api/process_payment")
+    Call<StripeInfo> sendStripe(@Body StripeInfo si);
 }
