@@ -63,6 +63,7 @@ public class SettingsFragment extends BaseFragment {
 
         viewModel = ViewModelProviders.of(this).get(SettingsViewModel.class);
         viewModel.setRepository(new WebServiceRepository());
+        viewModel.init();
 
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -78,7 +79,7 @@ public class SettingsFragment extends BaseFragment {
 
         LiveData <HSUser> user = viewModel.getUser();
 
-       // Log.e("SETTINGS_FRAGMENT", user.toString());
+        //Log.e("SETTINGS_FRAGMENT", user.toString());
 
         // Inflate the layout for this fragment
         return inflatedView;

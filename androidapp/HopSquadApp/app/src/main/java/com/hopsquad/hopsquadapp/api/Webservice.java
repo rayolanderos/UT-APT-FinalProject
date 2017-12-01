@@ -47,5 +47,5 @@ public interface Webservice {
     Call<HSUser> updateUser(@Body HSUser user);
 
     @GET("/api/get_user")
-    Call<HSUser> getUser(@Body String fbUserId);
+    Call<HSUser> getUser(@Query("fbUserId") String fbUserId);
 }
