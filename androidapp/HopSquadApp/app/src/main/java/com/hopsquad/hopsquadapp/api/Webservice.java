@@ -27,6 +27,9 @@ public interface Webservice {
     @GET("/api/get_all_beers")
     Call<List<Beer>> getTapList();
 
+    @GET("/api/get_beer")
+    Call<Beer> getBeer(@Query("beerId") int beerId);
+
     @GET("/api/get_all_orders")
     Call<List<HistoryOrder>> getAllOrders();
 
@@ -44,4 +47,11 @@ public interface Webservice {
 
     @POST("/api/process_payment")
     Call<StripeInfo> sendStripe(@Body StripeInfo si);
+
+    @POST("/api/update_user")
+    Call<HSUser> updateUser(@Body HSUser user);
+
+    @GET("/api/get_user")
+    Call<HSUser> getUser(@Query("fbUserId") String fbUserId);
+
 }

@@ -20,3 +20,4 @@ webapp/idna
 webapp/chardet
 webapp/pytz
 webapp/certifi
+webapp/requests-toolbelt
