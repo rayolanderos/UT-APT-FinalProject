@@ -1,15 +1,12 @@
 package com.hopsquad.hopsquadapp.fragments;
 
 
-import android.app.Activity;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,22 +18,6 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.identity.intents.model.UserAddress;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.wallet.AutoResolveHelper;
-import com.google.android.gms.wallet.CardInfo;
-import com.google.android.gms.wallet.CardRequirements;
-import com.google.android.gms.wallet.IsReadyToPayRequest;
-import com.google.android.gms.wallet.PaymentData;
-import com.google.android.gms.wallet.PaymentDataRequest;
-import com.google.android.gms.wallet.PaymentMethodTokenizationParameters;
-import com.google.android.gms.wallet.PaymentsClient;
-import com.google.android.gms.wallet.TransactionInfo;
-import com.google.android.gms.wallet.Wallet;
-import com.google.android.gms.wallet.WalletConstants;
 import com.hopsquad.hopsquadapp.R;
 import com.hopsquad.hopsquadapp.framework.PayWithGoogleService;
 import com.hopsquad.hopsquadapp.models.Beer;
@@ -46,7 +27,6 @@ import com.hopsquad.hopsquadapp.viewmodels.TapListViewModel;
 import com.squareup.picasso.Picasso;
 
 import java.text.NumberFormat;
-import java.util.Arrays;
 
 public class TapListFragment extends BaseFragment implements ConfirmOrderFragment.OnConfirmDialogOptionSelectedListener {
 
@@ -150,6 +130,21 @@ public class TapListFragment extends BaseFragment implements ConfirmOrderFragmen
             });
     }
 
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+    }
+
     private void registerPlacedOrder(String token) {
         final LiveData<Order> orderLiveData = viewModel.placeOrder(token);
         final TapListFragment tapListFragment = this;
@@ -172,7 +167,7 @@ public class TapListFragment extends BaseFragment implements ConfirmOrderFragmen
         mAdapter.isRefreshing = false;
     }
 
-    private static class BeerAdapter extends RecyclerView.Adapter<BeerHolder> {
+    private class BeerAdapter extends RecyclerView.Adapter<BeerHolder> {
 
         private TapListViewModel tapList;
         private Context context;
@@ -196,6 +191,7 @@ public class TapListFragment extends BaseFragment implements ConfirmOrderFragmen
         public void onBindViewHolder(BeerHolder holder, int position) {
             final Beer b = tapList.getTapList().getValue().get(position);
             holder.mTitleView.setText(b.name);
+            holder.mStyleView.setText(b.style);
             holder.mAlcoholByVolumeView.setText(String.format("%2.1f%%", b.abv));
             holder.mPriceView.setText(NumberFormat.getCurrencyInstance().format(b.price));
 
@@ -221,6 +217,17 @@ public class TapListFragment extends BaseFragment implements ConfirmOrderFragmen
 
             String thumbnail_uri = b.tap_list_image;
             Picasso.with(context).load(thumbnail_uri).into(holder.mImageView);
+            holder.mImageView.setClickable(true);
+            holder.mImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO: Launch beerFragment
+                    BeerFragment beerFragment = BeerFragment.newInstance(b.name, b.style, b.description,
+                            b.description_image, b.price, b.abv, b.ibus, b.srm, b.review );
+                    launchBeerDescription(beerFragment, "BEER_FRAGMENT");
+
+                }
+            });
         }
 
         @Override
@@ -229,9 +236,17 @@ public class TapListFragment extends BaseFragment implements ConfirmOrderFragmen
         }
     }
 
+    private void launchBeerDescription(BaseFragment fragment, String tag){
+        this.getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content, fragment, tag)
+                .addToBackStack(null)
+                .commit();
+    }
+
     private static class BeerHolder extends RecyclerView.ViewHolder {
         public ImageView mImageView;
         public TextView mTitleView;
+        public TextView mStyleView;
         public Spinner mSpinnerView;
         public TextView mAlcoholByVolumeView;
         public TextView mPriceView;
@@ -240,6 +255,7 @@ public class TapListFragment extends BaseFragment implements ConfirmOrderFragmen
             super(view);
             mImageView = view.findViewById(R.id.beerImage);
             mTitleView = view.findViewById(R.id.beerNameView);
+            mStyleView = view.findViewById(R.id.beerStyleText);
             mSpinnerView = view.findViewById(R.id.beerSpinner);
             mAlcoholByVolumeView = view.findViewById(R.id.alcoholByVolumeText);
             mPriceView = view.findViewById(R.id.beerPriceText);

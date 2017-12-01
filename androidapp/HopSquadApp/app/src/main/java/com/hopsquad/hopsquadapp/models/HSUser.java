@@ -13,14 +13,14 @@ public class HSUser {
     @SerializedName("userName")
     public String name;
 
+    @SerializedName("userEmail")
+    public String email;
+
     @SerializedName("userFbUserId")
     public String fireBaseUserId;
 
     @SerializedName("userPaymentKey")
     public String paymentKey;
-
-    @SerializedName("userEmail")
-    public String email;
 
     @SerializedName("userDateOfBirth")
     public Date dateOfBirth;

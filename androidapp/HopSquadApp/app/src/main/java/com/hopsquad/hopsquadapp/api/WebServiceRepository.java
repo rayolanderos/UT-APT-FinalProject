@@ -39,7 +39,7 @@ public class WebServiceRepository {
     private static Webservice webservice = initializeWebService("yyyy-MM-dd HH:mm:ss");
 
     // We have 2 different types of date formats, so we create 2 services.
-    private static Webservice getAllBeersWebService = initializeWebService("MM/dd/yyyy");
+    private static Webservice webservice2 = initializeWebService("MM/dd/yyyy");
 
     // '%m/%d/%Y %H:%M:%S'
     // We actually have 3 different types of date formats, so we create 3 services
@@ -78,7 +78,7 @@ public class WebServiceRepository {
     public LiveData<List<Beer>> getAllBeers() {
         final MutableLiveData<List<Beer>>  data = new MutableLiveData<>();
 
-        getAllBeersWebService.getTapList().enqueue(new Callback<List<Beer>>() {
+        webservice2.getTapList().enqueue(new Callback<List<Beer>>() {
             @Override
             public void onResponse(Call<List<Beer>> call, Response<List<Beer>> response) {
                 data.setValue(response.body());
@@ -86,6 +86,24 @@ public class WebServiceRepository {
 
             @Override
             public void onFailure(Call<List<Beer>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+        return data;
+    }
+
+    public LiveData<Beer> getSingleBeer(int beerId) {
+        final MutableLiveData<Beer>  data = new MutableLiveData<>();
+
+        webservice.getBeer(beerId).enqueue(new Callback<Beer>() {
+            @Override
+            public void onResponse(Call<Beer> call, Response<Beer> response) {
+                data.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Beer> call, Throwable t) {
                 t.printStackTrace();
             }
         });
@@ -171,6 +189,45 @@ public class WebServiceRepository {
             public void onResponse(Call<HSUser> call, Response<HSUser> response) {
                 HSUser value = response.isSuccessful() ? response.body() : new HSUser();
                 data.setValue(value);
+            }
+
+            @Override
+            public void onFailure(Call<HSUser> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+        return data;
+    }
+
+    public LiveData<HSUser> updateUser(HSUser user) {
+
+        final MutableLiveData<HSUser> data = new MutableLiveData<>();
+
+        webservice.updateUser(user).enqueue(new Callback<HSUser>() {
+            @Override
+            public void onResponse(Call<HSUser> call, Response<HSUser> response) {
+                HSUser value = response.isSuccessful() ? response.body() : new HSUser();
+                data.setValue(value);
+            }
+
+            @Override
+            public void onFailure(Call<HSUser> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+        return data;
+    }
+
+    public LiveData<HSUser> getUser(String fbUserId) {
+        final MutableLiveData<HSUser>  data = new MutableLiveData<>();
+
+        webservice2.getUser(fbUserId).enqueue(new Callback <HSUser>() {
+
+            @Override
+            public void onResponse(Call<HSUser> call, Response<HSUser> response) {
+                data.setValue(response.body());
             }
 
             @Override
