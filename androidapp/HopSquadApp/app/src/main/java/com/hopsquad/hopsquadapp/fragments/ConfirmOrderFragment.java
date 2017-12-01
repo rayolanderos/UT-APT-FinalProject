@@ -59,10 +59,10 @@ public class ConfirmOrderFragment extends BaseDialogFragment {
                 .setPositiveButton("Pay with Google", (dialogInterface, i) -> {
                     mListener.onConfirmDialogOptionSelected(true, "g");
                 })
-                .setPositiveButton("Pay with Stripe", (dialogInterface, i) -> {
+                .setNegativeButton("Pay with Stripe", (dialogInterface, i) -> {
                     mListener.onConfirmDialogOptionSelected(true, "s");
                 })
-                .setNegativeButton(R.string.cancel_order_button_dialog, (dialogInterface, i) -> {
+                .setNeutralButton(R.string.cancel_order_button_dialog, (dialogInterface, i) -> {
                     mListener.onConfirmDialogOptionSelected(false, "");
                 });
         return builder.create();

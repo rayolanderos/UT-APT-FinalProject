@@ -23,11 +23,11 @@ import com.stripe.android.view.CardInputWidget;
 
 public class PaymentActivity extends AppCompatActivity {
 
-    CardInputWidget mCardInputWidget = (CardInputWidget) findViewById(R.id.card_input_widget);
-    private EditText mZipcode = (EditText) findViewById(R.id.zip_input);
-    private EditText mName = (EditText) findViewById(R.id.name_input);
+    private CardInputWidget mCardInputWidget;
+    private EditText mZipcode;
+    private EditText mName;
     private LiveData<StripeInfo> si;
-    private WebServiceRepository repository = new WebServiceRepository();
+    private WebServiceRepository repository;
     private Float totalPrice;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +37,11 @@ public class PaymentActivity extends AppCompatActivity {
         totalPrice = intent.getFloatExtra("orderTotal", 0);
         TextView cost = (TextView)findViewById(R.id.Cost);
         cost.setText("Total: " + totalPrice);
-
+        mName = (EditText) findViewById(R.id.name_input);
+        mZipcode = (EditText) findViewById(R.id.zip_input);
         Button mEmailSignInButton = (Button) findViewById(R.id.submit_button);
+        mCardInputWidget = (CardInputWidget) findViewById(R.id.card_input_widget);
+        repository = new WebServiceRepository();
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,7 +73,6 @@ public class PaymentActivity extends AppCompatActivity {
                         cardToSave,
                         new TokenCallback() {
                             public void onSuccess(Token token) {
-                                // ToDo Send token to your server, the following 2 need to get to process_payment.py on the webapp
                                 Token paymentToken = token;
                                 sendStripe(totalPrice, paymentToken);
                             }
