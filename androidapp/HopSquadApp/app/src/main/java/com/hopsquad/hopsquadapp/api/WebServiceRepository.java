@@ -2,7 +2,6 @@ package com.hopsquad.hopsquadapp.api;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -40,10 +39,7 @@ public class WebServiceRepository {
     private static Webservice webservice = initializeWebService("yyyy-MM-dd HH:mm:ss");
 
     // We have 2 different types of date formats, so we create 2 services.
-    private static Webservice getAllBeersWebService = initializeWebService("MM/dd/yyyy");
-
-    // Same format, different service.
-    private static Webservice getUserWebService = initializeWebService("MM/dd/yyyy");
+    private static Webservice webservice2 = initializeWebService("MM/dd/yyyy");
 
     // '%m/%d/%Y %H:%M:%S'
     // We actually have 3 different types of date formats, so we create 3 services
@@ -82,7 +78,7 @@ public class WebServiceRepository {
     public LiveData<List<Beer>> getAllBeers() {
         final MutableLiveData<List<Beer>>  data = new MutableLiveData<>();
 
-        getAllBeersWebService.getTapList().enqueue(new Callback<List<Beer>>() {
+        webservice2.getTapList().enqueue(new Callback<List<Beer>>() {
             @Override
             public void onResponse(Call<List<Beer>> call, Response<List<Beer>> response) {
                 data.setValue(response.body());
@@ -227,7 +223,7 @@ public class WebServiceRepository {
     public LiveData<HSUser> getUser(String fbUserId) {
         final MutableLiveData<HSUser>  data = new MutableLiveData<>();
 
-        getUserWebService.getUser(fbUserId).enqueue(new Callback <HSUser>() {
+        webservice2.getUser(fbUserId).enqueue(new Callback <HSUser>() {
 
             @Override
             public void onResponse(Call<HSUser> call, Response<HSUser> response) {

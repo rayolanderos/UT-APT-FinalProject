@@ -1,17 +1,12 @@
 package com.hopsquad.hopsquadapp.fragments;
 
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,22 +18,6 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.identity.intents.model.UserAddress;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.wallet.AutoResolveHelper;
-import com.google.android.gms.wallet.CardInfo;
-import com.google.android.gms.wallet.CardRequirements;
-import com.google.android.gms.wallet.IsReadyToPayRequest;
-import com.google.android.gms.wallet.PaymentData;
-import com.google.android.gms.wallet.PaymentDataRequest;
-import com.google.android.gms.wallet.PaymentMethodTokenizationParameters;
-import com.google.android.gms.wallet.PaymentsClient;
-import com.google.android.gms.wallet.TransactionInfo;
-import com.google.android.gms.wallet.Wallet;
-import com.google.android.gms.wallet.WalletConstants;
 import com.hopsquad.hopsquadapp.R;
 import com.hopsquad.hopsquadapp.framework.PayWithGoogleService;
 import com.hopsquad.hopsquadapp.models.Beer;
@@ -48,7 +27,6 @@ import com.hopsquad.hopsquadapp.viewmodels.TapListViewModel;
 import com.squareup.picasso.Picasso;
 
 import java.text.NumberFormat;
-import java.util.Arrays;
 
 public class TapListFragment extends BaseFragment implements ConfirmOrderFragment.OnConfirmDialogOptionSelectedListener {
 
@@ -246,7 +224,7 @@ public class TapListFragment extends BaseFragment implements ConfirmOrderFragmen
                     //TODO: Launch beerFragment
                     BeerFragment beerFragment = BeerFragment.newInstance(b.name, b.style, b.description,
                             b.description_image, b.price, b.abv, b.ibus, b.srm, b.review );
-                    launchBeerDesctiption(beerFragment, "BEER_FRAGMENT");
+                    launchBeerDescription(beerFragment, "BEER_FRAGMENT");
 
                 }
             });
@@ -258,7 +236,7 @@ public class TapListFragment extends BaseFragment implements ConfirmOrderFragmen
         }
     }
 
-    private void launchBeerDesctiption(BaseFragment fragment, String tag){
+    private void launchBeerDescription(BaseFragment fragment, String tag){
         this.getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content, fragment, tag)
                 .addToBackStack(null)
