@@ -4,6 +4,7 @@ import com.hopsquad.hopsquadapp.models.Beer;
 import com.hopsquad.hopsquadapp.models.HSUser;
 import com.hopsquad.hopsquadapp.models.HistoryOrder;
 import com.hopsquad.hopsquadapp.models.Order;
+import com.hopsquad.hopsquadapp.models.Review;
 
 import java.util.List;
 
@@ -48,4 +49,7 @@ public interface Webservice {
 
     @GET("/api/get_user")
     Call<HSUser> getUser(@Query("fbUserId") String fbUserId);
+
+    @POST("/api/add_review")
+    Call<Review> addReview(@Body Review review);
 }
