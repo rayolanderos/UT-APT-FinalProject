@@ -3,6 +3,7 @@ package com.hopsquad.hopsquadapp.viewmodels;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -64,6 +65,8 @@ public class OrderHistoryViewModel extends ViewModel {
 
         Order order = convertHistoryOrderToOrder(historyOrder);
         order.invoice = token;
+
+        Log.d("OrderHistoryViewModel", "token: "+ token.toString());
 
         LiveData<Order> newOrder = webRepo.placeOrder(order);
         return newOrder;

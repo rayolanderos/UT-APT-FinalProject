@@ -53,7 +53,7 @@
     </string-array>
     <string name="confirm_order_dialog_button">Place Order</string>
     <string name="cancel_order_button_dialog">Cancel</string>
-    <string name="order_succesfully_placed_msg">Hey! You just got some beer!</string>
+    <string name="order_succesfully_placed_msg">We\'re serving your beer! Remember to bring your ID to the bar. </string>
     <string name="order_confirmation_generic_error">There was an error, please try again later.</string>
     <string name="confirm_order_dialog_title">Confirm Order</string>
     <string name="order_history_title">Order History</string>

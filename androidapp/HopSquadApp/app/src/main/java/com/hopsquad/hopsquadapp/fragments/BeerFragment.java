@@ -119,7 +119,7 @@ public class BeerFragment extends BaseFragment {
         // Inflate the layout for this fragment
         View beerView = inflater.inflate(R.layout.fragment_beer, container, false);
 
-        Picasso.with(this.getContext()).setIndicatorsEnabled(true);
+        Picasso.with(this.getContext()).setIndicatorsEnabled(false);
 
         ImageView mDescriptionImageView = beerView.findViewById(R.id.beerDescriptionImageView);
         TextView mNameView = beerView.findViewById(R.id.beerNameTextView);

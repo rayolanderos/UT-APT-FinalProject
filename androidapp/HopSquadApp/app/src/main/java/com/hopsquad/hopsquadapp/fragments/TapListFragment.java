@@ -119,7 +119,7 @@ public class TapListFragment extends BaseFragment implements ConfirmOrderFragmen
         if (mRecyclerView == null) {
             return;
         }
-        Picasso.with(this.getContext()).setIndicatorsEnabled(true);
+        Picasso.with(this.getContext()).setIndicatorsEnabled(false);
 
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this.getActivity());

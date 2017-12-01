@@ -1,5 +1,6 @@
 package com.hopsquad.hopsquadapp.activities;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,9 +10,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v7.view.menu.MenuBuilder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.hopsquad.hopsquadapp.R;
@@ -122,23 +125,20 @@ public class MainActivity extends BaseActivity implements TapListFragment.OnFrag
             navigation.setSelectedItemId(selectedNavigationItemId);
         }
 
-        // Does not work yet, but it's an attempt to fix the
-        // by design decision of android to not allow custom
-        // icons in v 3 and up.
+    }
 
-        Menu menu = navigation.getMenu();
-//        menu.findItem(R.id.navigation_home).setIcon(R.drawable.ic_beer);
-//        menu.findItem(R.id.navigation_dashboard).setIcon(R.drawable.ic_user);
-//        menu.findItem(R.id.navigation_notifications).setIcon(R.drawable.ic_settings);
+    @SuppressLint("RestrictedApi")
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.navigation, menu);
 
-        Method menuMethod = null;
-        try {
-            menuMethod = menu.getClass().getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
-            menuMethod.setAccessible(true);
-            menuMethod.invoke(menu, true);
-        } catch (Exception e) {
-            Log.e("MainActivity", e.toString());
+        if(menu instanceof MenuBuilder){
+            MenuBuilder m = (MenuBuilder) menu;
+            //noinspection RestrictedApi
+            m.setOptionalIconsVisible(true);
         }
+
+        return true;
     }
 
     @Override
