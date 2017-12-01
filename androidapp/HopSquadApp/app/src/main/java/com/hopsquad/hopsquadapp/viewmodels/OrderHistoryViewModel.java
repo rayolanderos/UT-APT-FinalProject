@@ -66,8 +66,6 @@ public class OrderHistoryViewModel extends ViewModel {
         Order order = convertHistoryOrderToOrder(historyOrder);
         order.invoice = token;
 
-        Log.d("OrderHistoryViewModel", "token: "+ token.toString());
-
         LiveData<Order> newOrder = webRepo.placeOrder(order);
         return newOrder;
     }

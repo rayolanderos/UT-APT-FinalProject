@@ -64,4 +64,11 @@ public class ConfirmOrderFragment extends BaseDialogFragment {
                 });
         return builder.create();
     }
+
+    // Added so app doesn't crash on cancel
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
 }

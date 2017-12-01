@@ -7,6 +7,6 @@ package com.hopsquad.hopsquadapp.models;
 public class Review {
 
     public int review;
-    public int beer_id;
+    public String beer_id;
 
 }

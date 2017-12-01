@@ -63,5 +63,7 @@
     <string name="addReviewButton">Review</string>
     <string name="dateOfBirthPlaceHolder">Date of Birth</string>
     <string name="RewardsPlaceholder">Rewards coming soon. Check back later for updates and rewards on your account!</string>
-
+    <string name="add_review_dialog_title">Review this Beer</string>
+    <string name="confirm_add_review_dialog_button">Add Review</string>
+    <string name="cancel_add_review_dialog_button">Cancel</string>
 </resources>
