@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.hopsquad.hopsquadapp.R;
 import com.hopsquad.hopsquadapp.api.WebServiceRepository;
@@ -20,6 +21,7 @@ import com.hopsquad.hopsquadapp.models.HSUser;
 import com.hopsquad.hopsquadapp.viewmodels.OrderHistoryViewModel;
 import com.hopsquad.hopsquadapp.viewmodels.SettingsViewModel;
 
+import java.text.SimpleDateFormat;
 
 
 public class SettingsFragment extends BaseFragment {
@@ -75,22 +77,31 @@ public class SettingsFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View inflatedView = inflater.inflate(R.layout.fragment_settings, container, false);
+        View settingsView = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        LiveData <HSUser> userLiveData = viewModel.getUser();
-
-        HSUser user = userLiveData.getValue();
-
-        if (user != null)
-            Log.d("SETTINGS_FRAGMENT", user.name);
+        viewModel.getUser().observe(this, (userData)-> {
+            refreshUserSettings(userData, settingsView);
+        });
 
         // Inflate the layout for this fragment
-        return inflatedView;
+        return settingsView;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.settings, menu);
+    }
+
+    private void refreshUserSettings(HSUser user, View settingsView){
+        TextView mNameView = settingsView.findViewById(R.id.nameField);
+        TextView mEmailView = settingsView.findViewById(R.id.emailField);
+        TextView mBirthDateView = settingsView.findViewById(R.id.birthDateField);
+
+        if(user != null) {
+            mNameView.setText(user.name);
+            mEmailView.setText(user.email);
+            mBirthDateView.setText(new SimpleDateFormat("MM-dd-yyyy").format(user.dateOfBirth));
+        }
     }
 
 }
