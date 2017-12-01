@@ -116,6 +116,7 @@ public class MainActivity extends BaseActivity implements TapListFragment.OnFrag
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        navigation.setItemIconTintList(null);
 
         int selectedNavigationItemId = viewModel.getSelectedNavigationItemId();
 

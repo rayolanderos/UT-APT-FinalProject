@@ -60,6 +60,8 @@
     <string name="my_rewards_title">My Rewards</string>
     <string name="prompt_name">Name</string>
     <string name="orderAgainButton">Order</string>
+    <string name="addReviewButton">Review</string>
     <string name="dateOfBirthPlaceHolder">Date of Birth</string>
+    <string name="RewardsPlaceholder">Rewards coming soon. Check back later for updates and rewards on your account!</string>
 
 </resources>
