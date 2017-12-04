@@ -119,7 +119,7 @@ public class TapListFragment extends BaseFragment implements ConfirmOrderFragmen
         if (mRecyclerView == null) {
             return;
         }
-        Picasso.with(this.getContext()).setIndicatorsEnabled(true);
+        Picasso.with(this.getContext()).setIndicatorsEnabled(false);
 
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this.getActivity());
@@ -222,7 +222,7 @@ public class TapListFragment extends BaseFragment implements ConfirmOrderFragmen
                 @Override
                 public void onClick(View v) {
                     //TODO: Launch beerFragment
-                    BeerFragment beerFragment = BeerFragment.newInstance(b.name, b.style, b.description,
+                    BeerFragment beerFragment = BeerFragment.newInstance(b.id, b.name, b.style, b.description,
                             b.description_image, b.price, b.abv, b.ibus, b.srm, b.review );
                     launchBeerDescription(beerFragment, "BEER_FRAGMENT");
 

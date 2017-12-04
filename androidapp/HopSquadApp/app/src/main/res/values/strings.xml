@@ -53,13 +53,17 @@
     </string-array>
     <string name="confirm_order_dialog_button">Place Order</string>
     <string name="cancel_order_button_dialog">Cancel</string>
-    <string name="order_succesfully_placed_msg">Hey! You just got some beer!</string>
+    <string name="order_succesfully_placed_msg">We\'re serving your beer! Remember to bring your ID to the bar. </string>
     <string name="order_confirmation_generic_error">There was an error, please try again later.</string>
     <string name="confirm_order_dialog_title">Confirm Order</string>
     <string name="order_history_title">Order History</string>
     <string name="my_rewards_title">My Rewards</string>
     <string name="prompt_name">Name</string>
     <string name="orderAgainButton">Order</string>
+    <string name="addReviewButton">Review</string>
     <string name="dateOfBirthPlaceHolder">Date of Birth</string>
-
+    <string name="RewardsPlaceholder">Rewards coming soon. Check back later for updates and rewards on your account!</string>
+    <string name="add_review_dialog_title">Review this Beer</string>
+    <string name="confirm_add_review_dialog_button">Add Review</string>
+    <string name="cancel_add_review_dialog_button">Cancel</string>
 </resources>

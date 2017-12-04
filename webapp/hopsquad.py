@@ -26,6 +26,7 @@ from services import get_all_orders_by_user
 from services import add_user
 from services import update_user
 from services import get_user
+from services import add_review
 
 
 templates_dir = os.path.normpath(os.path.dirname(__file__) + '/www/')
@@ -77,6 +78,7 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/api/get_all_orders_by_user', get_all_orders_by_user.GetAllOrdersByUser, name='get-all-orders-by-user'),
     webapp2.Route('/api/add_user', add_user.AddUser, name='add-user'),
     webapp2.Route('/api/update_user', update_user.UpdateUser, name='update-user'),
-    webapp2.Route('/api/get_user', get_user.GetUser, name='get-user')
+    webapp2.Route('/api/get_user', get_user.GetUser, name='get-user'),
+    webapp2.Route('/api/add_review', add_review.AddReview, name='add-review')
 
 ], debug=True)

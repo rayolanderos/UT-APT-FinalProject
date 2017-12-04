@@ -39,7 +39,7 @@ $(document).ready( function() {
   $(".updateBeerBtn").click( function (){
     var beerId = $(this).attr("data");
 
-    // Upload Tap List Image
+    // Upload Tap List Image on Update
     if($("#updateBeerTapListImageForm-"+beerId+" .box").hasClass("updated")){
       $.ajax({
         url: '/generate_upload_url',
@@ -50,15 +50,19 @@ $(document).ready( function() {
       });
     }
 
-    // Upload Description Image
+    // Upload Description Image on Update
     if($("#updateBeerDescriptionImageForm-"+beerId+" .box").hasClass("updated")){
       $.ajax({
         url: '/generate_upload_url',
         async: false,
         success: function(data) {
-          ajaxUpload(data, '#addBeerDescriptionImageForm-'+beerId, '#addBeerDescriptionImage-'+beerId, 'update', beerId);
+          ajaxUpload(data, '#updateBeerDescriptionImageForm-'+beerId, '#updateBeerDescriptionImage-'+beerId, 'update', beerId);
         }
       });
+    }
+
+    if (! $("#updateBeerTapListImageForm-"+beerId+" .box").hasClass("updated") && ! $("#updateBeerDescriptionImageForm-"+beerId+" .box").hasClass("updated")  ) {
+      $("#updateBeerForm-"+beerId).submit();
     }
 
   });
@@ -118,7 +122,7 @@ function postUploadCallback(formAction, id=""){
   else if(formAction == "update"){
     var updateBeerTapListImage = $("#updateBeerTapListImage-"+id).val();
     var updateBeerDescriptionImage = $("#updateBeerDescriptionImage-"+id).val();
-    if(updateBeerTapListImage != "" && updateBeerTapListImage != "")
+    if(updateBeerTapListImage != "" && updateBeerDescriptionImage != "")
     $("#updateBeerForm-"+id).submit();
   }
 }

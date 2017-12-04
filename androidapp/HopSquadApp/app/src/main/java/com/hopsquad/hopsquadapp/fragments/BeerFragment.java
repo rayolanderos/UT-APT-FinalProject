@@ -1,7 +1,9 @@
 package com.hopsquad.hopsquadapp.fragments;
 
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,16 +11,20 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.hopsquad.hopsquadapp.R;
+import com.hopsquad.hopsquadapp.api.WebServiceRepository;
 import com.hopsquad.hopsquadapp.models.Beer;
 import com.hopsquad.hopsquadapp.viewmodels.BeerViewModel;
+import com.hopsquad.hopsquadapp.viewmodels.OrderHistoryViewModel;
 import com.hopsquad.hopsquadapp.viewmodels.TapListViewModel;
 import com.squareup.picasso.Picasso;
 
@@ -33,12 +39,13 @@ import java.util.List;
  * Use the {@link BeerFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BeerFragment extends BaseFragment {
+public class BeerFragment extends BaseFragment implements AddReviewFragment.OnConfirmDialogOptionSelectedListener {
 
     private ScrollView mScrollView;
     private BeerViewModel viewModel;
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_BEER_ID = "beer_id";
     private static final String ARG_BEER_NAME = "beer_name";
     private static final String ARG_BEER_STYLE = "beer_style";
     private static final String ARG_BEER_DESCRIPTION = "beer_description";
@@ -49,7 +56,7 @@ public class BeerFragment extends BaseFragment {
     private static final String ARG_BEER_REVIEW = "beer_review";
     private static final String ARG_BEER_DESCRIPTION_IMAGE = "description_image";
 
-
+    public String id;
     public String name;
     public String style;
     public String description;
@@ -61,6 +68,7 @@ public class BeerFragment extends BaseFragment {
     public double review;
 
     private OnFragmentInteractionListener mListener;
+    private Button mAddReviewButton;
 
     public BeerFragment() {
         // Required empty public constructor
@@ -73,7 +81,8 @@ public class BeerFragment extends BaseFragment {
      * @return A new instance of fragment BeerFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static BeerFragment newInstance(String beer_name,
+    public static BeerFragment newInstance(String beer_id,
+                                           String beer_name,
                                            String beer_style,
                                            String beer_description,
                                            String beer_description_image,
@@ -84,6 +93,7 @@ public class BeerFragment extends BaseFragment {
                                            double beer_review) {
         BeerFragment fragment = new BeerFragment();
         Bundle args = new Bundle();
+        args.putString(ARG_BEER_ID, beer_id);
         args.putString(ARG_BEER_NAME, beer_name);
         args.putString(ARG_BEER_STYLE, beer_style);
         args.putString(ARG_BEER_DESCRIPTION, beer_description);
@@ -100,7 +110,13 @@ public class BeerFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        viewModel = ViewModelProviders.of(this).get(BeerViewModel.class);
+        viewModel.setRepository(new WebServiceRepository());
+        viewModel.init();
+
         if (getArguments() != null) {
+            id = getArguments().getString(ARG_BEER_ID);
             name = getArguments().getString(ARG_BEER_NAME);
             style = getArguments().getString(ARG_BEER_STYLE);
             description = getArguments().getString(ARG_BEER_DESCRIPTION);
@@ -119,7 +135,7 @@ public class BeerFragment extends BaseFragment {
         // Inflate the layout for this fragment
         View beerView = inflater.inflate(R.layout.fragment_beer, container, false);
 
-        Picasso.with(this.getContext()).setIndicatorsEnabled(true);
+        Picasso.with(this.getContext()).setIndicatorsEnabled(false);
 
         ImageView mDescriptionImageView = beerView.findViewById(R.id.beerDescriptionImageView);
         TextView mNameView = beerView.findViewById(R.id.beerNameTextView);
@@ -131,6 +147,8 @@ public class BeerFragment extends BaseFragment {
         TextView mReviewView = beerView.findViewById(R.id.beerReviewTextView);
         TextView mDescriptionView = beerView.findViewById(R.id.beerDescriptionTextView);
 
+        mAddReviewButton = beerView.findViewById(R.id.addReview);
+        mAddReviewButton.setOnClickListener(view -> addReview(id));
 
         mStyleView.setText(style);
         mNameView.setText(name);
@@ -138,7 +156,7 @@ public class BeerFragment extends BaseFragment {
         mIbusView.setText(Double.toString(ibus));
         mSrmView.setText(Integer.toString(srm));
         mPriceView.setText(NumberFormat.getCurrencyInstance().format(price));
-        mReviewView.setText(Double.toString(review));
+        mReviewView.setText(String.format("%.1f", review));
         mDescriptionView.setText(description);
 
         String thumbnail_uri = description_image;
@@ -187,4 +205,21 @@ public class BeerFragment extends BaseFragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    private void addReview(String beer_id){
+        AddReviewFragment addReviewDialog = AddReviewFragment.newInstance(beer_id);
+        addReviewDialog.setOnConfirmDialogOptionSelectedListener(this);
+        addReviewDialog.show(this.getFragmentManager(), "ADD_REVIEW");
+    }
+
+    @Override
+    public void onConfirmDialogOptionSelected(boolean confirmed, String beer_id, int review) {
+        if (confirmed) {
+            // TODO: webrepo add review
+            Log.d("BeerFragment", "beer_id: " + beer_id);
+            Log.d("BeerFragment", "review: " + String.valueOf(review));
+            viewModel.addReview(beer_id, review);
+        }
+    }
+
 }

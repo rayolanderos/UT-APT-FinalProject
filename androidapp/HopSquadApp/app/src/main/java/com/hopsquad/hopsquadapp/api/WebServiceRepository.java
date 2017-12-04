@@ -9,6 +9,7 @@ import com.hopsquad.hopsquadapp.models.Beer;
 import com.hopsquad.hopsquadapp.models.HSUser;
 import com.hopsquad.hopsquadapp.models.HistoryOrder;
 import com.hopsquad.hopsquadapp.models.Order;
+import com.hopsquad.hopsquadapp.models.Review;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -232,6 +233,25 @@ public class WebServiceRepository {
 
             @Override
             public void onFailure(Call<HSUser> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+        return data;
+    }
+
+    public LiveData<Review> addReview(Review review) {
+
+        final MutableLiveData<Review> data = new MutableLiveData<>();
+
+        webservice.addReview(review).enqueue(new Callback<Review>() {
+            @Override
+            public void onResponse(Call<Review> call, Response<Review> response) {
+                Review value = response.isSuccessful() ? response.body() : new Review();
+                data.setValue(value);
+            }
+            @Override
+            public void onFailure(Call<Review> call, Throwable t) {
                 t.printStackTrace();
             }
         });
